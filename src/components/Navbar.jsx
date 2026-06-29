@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
 
 export const Navbar = ({ currentPath, setRoute }) => {
   const { cart, currentUser, logout } = useContext(ShopContext);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -104,14 +105,95 @@ export const Navbar = ({ currentPath, setRoute }) => {
           </a>
 
           {/* Profile Session */}
+          {/* Profile Session */}
           {currentUser ? (
-            <div style={styles.userMenu}>
-              <span style={styles.userName} title={currentUser.email}>
-                Hi, {currentUser.name.split(' ')[0]}
-              </span>
-              <button onClick={logout} style={styles.logoutBtn}>
-                Logout
+            <div style={{ position: 'relative' }}>
+              <button 
+                onClick={() => setDropdownOpen(!dropdownOpen)} 
+                style={styles.profileTrigger}
+                className="navbar-profile-trigger"
+              >
+                <div style={styles.avatarCircle}>
+                  {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span style={styles.profileName}>
+                  {currentUser.name.split(' ')[0] || currentUser.email.split('@')[0]}
+                </span>
+                {currentUser.isAdmin && (
+                  <span style={styles.admBadge}>ADM</span>
+                )}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#64748b', marginLeft: '4px' }}>
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
               </button>
+
+              {dropdownOpen && (
+                <>
+                  <div style={styles.dropdownOverlay} onClick={() => setDropdownOpen(false)} />
+                  <div style={styles.dropdownCard}>
+                    <div style={styles.dropdownHeader}>
+                      <span style={styles.dropdownUser}>{currentUser.name}</span>
+                      <span style={styles.dropdownEmail}>{currentUser.email}</span>
+                    </div>
+                    <div style={styles.divider} />
+                    <ul style={styles.dropdownList}>
+                      {currentUser.isAdmin && (
+                        <li>
+                          <a 
+                            href="/admin.html"
+                            style={styles.dropdownItem}
+                            onClick={() => setDropdownOpen(false)}
+                            className="navbar-profile-item"
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C5A059" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
+                              <rect x="3" y="3" width="7" height="9" />
+                              <rect x="14" y="3" width="7" height="5" />
+                              <rect x="14" y="12" width="7" height="9" />
+                              <rect x="3" y="16" width="7" height="5" />
+                            </svg>
+                            <span style={{ color: '#C5A059', fontWeight: '600' }}>Admin Panel</span>
+                          </a>
+                        </li>
+                      )}
+                      <li>
+                        <a 
+                          href="#orders" 
+                          style={styles.dropdownItem}
+                          onClick={(e) => {
+                            setDropdownOpen(false);
+                            handleNav('orders', e);
+                          }}
+                          className="navbar-profile-item"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <path d="M16 10a4 4 0 0 1-8 0" />
+                          </svg>
+                          My Orders
+                        </a>
+                      </li>
+                      <li style={{ borderTop: '1px solid #f1f5f9', marginTop: '4px', paddingTop: '4px' }}>
+                        <button 
+                          onClick={() => {
+                            setDropdownOpen(false);
+                            logout();
+                          }} 
+                          style={{ ...styles.dropdownItem, width: '100%', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left' }}
+                          className="navbar-profile-item"
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                          </svg>
+                          <span style={{ color: '#ef4444' }}>Logout</span>
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <a href="#login" onClick={(e) => handleNav('login', e)} style={styles.loginBtn}>
@@ -240,26 +322,103 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center'
   },
-  userMenu: {
+  profileTrigger: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '8px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    padding: '4px 12px 4px 4px',
+    borderRadius: '9999px',
+    cursor: 'pointer',
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+    transition: 'all 0.2s ease',
   },
-  userName: {
-    fontSize: '13px',
-    fontWeight: '600',
-    color: 'var(--color-primary-dark)'
+  avatarCircle: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    backgroundColor: '#ef4444',
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  logoutBtn: {
-    fontSize: '11px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    color: 'var(--color-danger)',
+  profileName: {
+    fontSize: '12px',
     fontWeight: '600',
-    padding: '4px 8px',
-    border: '1px solid transparent',
+    color: '#1e293b',
+  },
+  admBadge: {
+    fontSize: '9px',
+    fontWeight: '700',
+    backgroundColor: '#ffe4e6',
+    color: '#e11d48',
+    padding: '1px 5px',
     borderRadius: '4px',
-    transition: 'var(--transition-fast)'
+    letterSpacing: '0.5px',
+  },
+  dropdownOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 90,
+  },
+  dropdownCard: {
+    position: 'absolute',
+    top: 'calc(100% + 8px)',
+    right: 0,
+    width: '220px',
+    backgroundColor: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
+    zIndex: 100,
+    padding: '10px 0',
+    textAlign: 'left',
+  },
+  dropdownHeader: {
+    padding: '4px 16px 8px 16px',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  dropdownUser: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#1e293b',
+  },
+  dropdownEmail: {
+    fontSize: '11px',
+    color: '#64748b',
+    marginTop: '2px',
+  },
+  divider: {
+    height: '1px',
+    backgroundColor: '#f1f5f9',
+    margin: '6px 0',
+  },
+  dropdownList: {
+    listStyle: 'none',
+    padding: '0 6px',
+    margin: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '2px',
+  },
+  dropdownItem: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '6px 10px',
+    borderRadius: '6px',
+    fontSize: '12px',
+    fontWeight: '600',
+    color: '#475569',
+    transition: 'all 0.2s ease',
+    textDecoration: 'none',
   },
   loginBtn: {
     fontSize: '13px',

@@ -170,8 +170,8 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
 
           <div style={styles.demoCredentialsBox}>
             <strong>Demo Admin Login:</strong><br />
-            Email: <code>admin@ramafabrics.com</code><br />
-            Password: <code>admin123</code>
+            Email: <code>v.bhavyasri2001@gmail.com</code><br />
+            Password: <code>123456</code>
           </div>
         </div>
       </div>
@@ -269,7 +269,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
       <div style={styles.adminHeaderBlock}>
         <div>
           <span style={styles.adminBadge}>STORE BACKEND CONSOLE</span>
-          <h1 style={styles.adminTitle}>Administration Panel</h1>
+          <h1 style={styles.adminTitle}>Hi, {currentUser?.name || 'Admin'}</h1>
         </div>
         <button onClick={() => setRoute('')} className="btn btn-secondary btn-sm">
           ← View Storefront
@@ -804,7 +804,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
                         value={settingsForm.whatsapp}
                         onChange={(e) => setSettingsForm({ ...settingsForm, whatsapp: e.target.value })}
                         className="form-input"
-                        placeholder="918977001696"
+                        placeholder="919618896169"
                         required
                       />
                     </div>

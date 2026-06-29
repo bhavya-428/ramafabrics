@@ -122,7 +122,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="089770 01696"
+                placeholder="96188 96169"
                 className="form-input"
                 required
               />
@@ -134,7 +134,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="whatsapp"
                 value={formData.whatsapp}
                 onChange={handleChange}
-                placeholder="918977001696"
+                placeholder="919618896169"
                 className="form-input"
                 required
               />

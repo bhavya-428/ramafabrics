@@ -158,8 +158,8 @@ const initialOffers = [
 const initialSettings = {
   storeName: 'Rama Fabrics',
   storeAddress: '40-26/1-14, Brindavan Colony, Sriram Nagar, Vijayawada, Andhra Pradesh 520010',
-  phone: '089770 01696',
-  whatsapp: '918977001696', // digits only with country code
+  phone: '96188 96169',
+  whatsapp: '919618896169', // digits only with country code
   upiId: 'ramafabrics@okaxis',
   merchantName: 'Rama Fabrics',
   hours: '10:00 AM - 9:30 PM',
@@ -190,7 +190,16 @@ export const ShopProvider = ({ children }) => {
 
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('rf_settings');
-    return saved ? JSON.parse(saved) : initialSettings;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.whatsapp === '918977001696') {
+        parsed.whatsapp = '919618896169';
+        parsed.phone = '96188 96169';
+        localStorage.setItem('rf_settings', JSON.stringify(parsed));
+      }
+      return parsed;
+    }
+    return initialSettings;
   });
 
   const [orders, setOrders] = useState(() => {
@@ -206,7 +215,15 @@ export const ShopProvider = ({ children }) => {
   // Client Session States
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('rf_current_user');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.email === 'v.bhavyasri2001@gmail.com' && parsed.name === 'Store Owner') {
+        parsed.name = 'v.bhavyasri2001';
+        localStorage.setItem('rf_current_user', JSON.stringify(parsed));
+      }
+      return parsed;
+    }
+    return null;
   });
 
   const [cart, setCart] = useState(() => {
@@ -385,8 +402,8 @@ export const ShopProvider = ({ children }) => {
   const login = (email, password) => {
     const trimmedEmail = email.toLowerCase().trim();
     // Default hardcoded admin fallback for ease of access if users array is empty
-    if (trimmedEmail === 'admin@ramafabrics.com' && password === 'admin123') {
-      const adminSession = { name: 'Store Owner', email: trimmedEmail, isAdmin: true };
+    if (trimmedEmail === 'v.bhavyasri2001@gmail.com' && password === '123456') {
+      const adminSession = { name: 'v.bhavyasri2001', email: trimmedEmail, isAdmin: true };
       setCurrentUser(adminSession);
       return { success: true, message: 'Logged in as Admin successfully!' };
     }
@@ -508,7 +525,9 @@ _I have completed the payment via UPI. Please confirm my order!_`;
         updateOrderStatus,
         updateSettings,
         getUpiUrl,
-        getWhatsAppLink
+        getWhatsAppLink,
+        users,
+        setUsers
       }}
     >
       {children}
