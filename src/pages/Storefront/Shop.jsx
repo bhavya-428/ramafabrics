@@ -2,8 +2,7 @@ import React, { useContext, useState } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedProductId }) => {
-  const { products, addToCart } = useContext(ShopContext);
-  const [searchTerm, setSearchTerm] = useState('');
+  const { products, addToCart, searchQuery, setSearchQuery, cart, updateCartQty } = useContext(ShopContext);
   const [sortBy, setSortBy] = useState('default');
   const [inStockOnly, setInStockOnly] = useState(false);
 
@@ -14,9 +13,9 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
 
   // Filter products
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          product.description.toLowerCase().includes(searchQuery.toLowerCase());
     
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
     const matchesStock = !inStockOnly || product.stock > 0;
@@ -32,7 +31,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
     return 0; // default
   });
 
-  const categories = ['All', 'Silk', 'Cotton', 'Handloom', 'Georgette', 'Ready-to-Wear'];
+  const categories = ['All', 'Cotton', 'Silk', 'Linen', 'Rayon', 'Muslin', 'Organza', 'Chiffon', 'Velvet', 'Embroidery', 'Printed Fabrics', 'Dress Materials'];
 
   return (
     <div className="container animate-fade-in" style={styles.shopContainer}>
@@ -50,8 +49,8 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
             <input 
               type="text" 
               placeholder="Search silk, handloom..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               className="form-input"
               style={styles.searchInput}
             />
@@ -174,12 +173,26 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
                         )}
                       </span>
                       {product.stock > 0 ? (
-                        <button 
-                          onClick={() => addToCart(product, 1)}
-                          className="btn btn-primary btn-sm"
-                        >
-                          + Add
-                        </button>
+                        cart.find(c => c.product.id === product.id) ? (
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
+                            <button 
+                              style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                              onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                            >-</button>
+                            <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
+                            <button 
+                              style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                              onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                            >+</button>
+                          </div>
+                        ) : (
+                          <button 
+                            onClick={() => addToCart(product, 1)}
+                            className="btn btn-primary btn-sm"
+                          >
+                            + Add
+                          </button>
+                        )
                       ) : (
                         <span style={styles.soldOutText}>Sold Out</span>
                       )}
@@ -197,7 +210,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
               <h3>No fabrics match your search criteria.</h3>
               <p>Try resetting filters or searching with different keywords.</p>
               <button 
-                onClick={() => { setSearchTerm(''); setCategoryFilter('All'); setInStockOnly(false); }}
+                onClick={() => { setSearchQuery(''); setCategoryFilter('All'); setInStockOnly(false); }}
                 className="btn btn-primary btn-sm"
                 style={{marginTop: '16px'}}
               >
@@ -436,6 +449,15 @@ const styles = {
     padding: '64px 32px',
     textAlign: 'center',
     boxShadow: 'var(--shadow-sm)'
+  },
+  qtyBtn: {
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    fontWeight: '700',
   },
   // Responsive sidebar styles handled through CSS media queries if needed,
   // but this is highly performant.

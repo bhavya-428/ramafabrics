@@ -2,10 +2,14 @@ import React, { useContext } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const NewArrivals = ({ setRoute, setSelectedProductId }) => {
-  const { products, addToCart, toggleWishlist, wishlist } = useContext(ShopContext);
+  const { products, addToCart } = useContext(ShopContext);
 
-  // New Arrivals: manually curated
-  const newArrivals = products.filter(p => p.isNewArrival);
+  const newArrivals = products.filter(p => p.isNew).slice(0, 12);
+  
+  if (newArrivals.length === 0) {
+    // Fallback if no isNew flag
+    newArrivals.push(...products.slice(0, 12));
+  }
 
   const handleViewProduct = (id) => {
     setSelectedProductId(id);
@@ -13,89 +17,85 @@ export const NewArrivals = ({ setRoute, setSelectedProductId }) => {
   };
 
   return (
-    <div className="animate-fade-in" style={{ backgroundColor: '#FAF9F6', minHeight: '100vh', padding: '40px 24px' }}>
-      <div className="container">
-        <div style={styles.header}>
-          <h1 style={styles.title}>New Arrivals</h1>
-          <p style={styles.subtitle}>Discover our latest collections of premium fabrics, fresh from the weavers.</p>
-        </div>
+    <div className="container animate-fade-in" style={styles.pageContainer}>
+      <div style={styles.header}>
+        <span style={styles.subTitle}>FRESH OFF THE LOOM</span>
+        <h1 style={styles.title}>New Arrivals</h1>
+        <p style={styles.desc}>Discover our latest collection of premium fabrics, featuring fresh designs and modern weaves for the season.</p>
+      </div>
 
-        <div style={styles.grid}>
-          {newArrivals.map((product) => {
-            const isWishlisted = wishlist.includes(product.id);
-            return (
-              <div key={product.id} style={styles.productCard}>
-                <div 
-                  style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }} 
-                  onClick={() => handleViewProduct(product.id)}
+      <div className="grid grid-4 gap-3">
+        {newArrivals.map((product) => (
+          <div key={product.id} className="luxury-card" style={styles.productCard}>
+            <div 
+              style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }}
+              onClick={() => handleViewProduct(product.id)}
+            >
+              <span style={styles.newBadge}>NEW</span>
+            </div>
+            
+            <div style={styles.productInfo}>
+              <span style={styles.productCat}>{product.category}</span>
+              <h3 style={styles.productName} onClick={() => handleViewProduct(product.id)}>
+                {product.name}
+              </h3>
+              <div style={styles.priceRow}>
+                <span style={styles.productPrice}>₹{product.price}</span>
+                <button 
+                  onClick={() => addToCart(product, 1)}
+                  className="btn btn-primary btn-sm"
                 >
-                  <span style={styles.newBadge}>NEW</span>
-                  <div 
-                    style={styles.wishlistBtn}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleWishlist(product.id);
-                    }}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill={isWishlisted ? "#ef4444" : "none"} stroke={isWishlisted ? "#ef4444" : "currentColor"} strokeWidth="2">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div style={styles.productInfo}>
-                  <h3 style={styles.productName}>{product.name}</h3>
-                  <span style={styles.productCat}>{product.category}</span>
-                  <div style={styles.priceRow}>
-                    <span style={styles.productPrice}>₹{product.price}</span>
-                  </div>
-                </div>
-                <button style={styles.addToCartBtn} onClick={() => addToCart(product, 1)}>
-                  Add to Cart
+                  + Add
                 </button>
               </div>
-            );
-          })}
-        </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
 const styles = {
+  pageContainer: {
+    paddingTop: '40px',
+    paddingBottom: '80px',
+  },
   header: {
     textAlign: 'center',
     marginBottom: '48px',
+    maxWidth: '600px',
+    margin: '0 auto 48px auto'
+  },
+  subTitle: {
+    fontSize: '12px',
+    fontWeight: '700',
+    color: 'var(--color-secondary-dark)',
+    letterSpacing: '2px',
+    textTransform: 'uppercase'
   },
   title: {
     fontSize: '36px',
-    fontFamily: 'var(--font-serif)',
-    color: '#1e293b',
-    marginBottom: '12px',
+    color: 'var(--color-primary-dark)',
+    marginTop: '8px',
+    marginBottom: '16px'
   },
-  subtitle: {
-    fontSize: '16px',
-    color: '#64748b',
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
-    gap: '24px',
+  desc: {
+    fontSize: '15px',
+    color: 'var(--color-text-muted)'
   },
   productCard: {
-    backgroundColor: '#fff',
-    borderRadius: '12px',
-    overflow: 'hidden',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+    padding: 0,
     display: 'flex',
     flexDirection: 'column',
-    border: '1px solid #f1f5f9',
+    overflow: 'hidden'
   },
   productImage: {
     height: '240px',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    position: 'relative',
     cursor: 'pointer',
+    position: 'relative'
   },
   newBadge: {
     position: 'absolute',
@@ -103,61 +103,42 @@ const styles = {
     left: '12px',
     backgroundColor: '#10b981',
     color: '#fff',
-    fontSize: '9px',
+    fontSize: '10px',
     fontWeight: '700',
     padding: '4px 8px',
     borderRadius: '4px',
-    letterSpacing: '0.5px',
-  },
-  wishlistBtn: {
-    position: 'absolute',
-    top: '12px',
-    right: '12px',
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    backgroundColor: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    color: '#64748b',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    letterSpacing: '0.5px'
   },
   productInfo: {
     padding: '16px',
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1,
-  },
-  productName: {
-    fontSize: '14px',
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: '4px',
-    lineHeight: '1.3',
+    flexGrow: 1
   },
   productCat: {
-    fontSize: '12px',
-    color: '#64748b',
-    marginBottom: '12px',
+    fontSize: '11px',
+    fontWeight: '700',
+    color: 'var(--color-secondary-dark)',
+    textTransform: 'uppercase',
+    marginBottom: '4px'
+  },
+  productName: {
+    fontSize: '15px',
+    fontWeight: '600',
+    color: 'var(--color-primary-dark)',
+    cursor: 'pointer',
+    marginBottom: '16px',
+    lineHeight: '1.3'
   },
   priceRow: {
-    marginTop: 'auto',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 'auto'
   },
   productPrice: {
     fontSize: '16px',
     fontWeight: '700',
-    color: '#1e293b',
-  },
-  addToCartBtn: {
-    backgroundColor: '#6C1425',
-    color: '#fff',
-    padding: '12px',
-    fontSize: '13px',
-    fontWeight: '600',
-    border: 'none',
-    cursor: 'pointer',
-    width: '100%',
+    color: 'var(--color-primary-dark)'
   }
 };

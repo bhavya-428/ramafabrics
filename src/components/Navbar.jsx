@@ -2,9 +2,16 @@ import React, { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
 
 export const Navbar = ({ currentPath, setRoute }) => {
-  const { cart, currentUser } = useContext(ShopContext);
+  const { cart, currentUser, searchQuery, setSearchQuery } = useContext(ShopContext);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setRoute('shop');
+    }
+  };
 
   const handleNav = (route, e) => {
     e.preventDefault();
@@ -30,19 +37,21 @@ export const Navbar = ({ currentPath, setRoute }) => {
           </a>
 
           {/* Search Bar */}
-          <div style={styles.searchContainer}>
+          <form style={styles.searchContainer} onSubmit={handleSearchSubmit}>
             <input 
               type="text" 
               placeholder="Search by fabric name, material, color, category..." 
               style={styles.searchInput}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button style={styles.searchBtn}>
+            <button type="submit" style={styles.searchBtn}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
-          </div>
+          </form>
 
           {/* Action Icons */}
           <div style={styles.actions}>
@@ -82,7 +91,7 @@ export const Navbar = ({ currentPath, setRoute }) => {
       {/* Secondary Navigation */}
       <div style={styles.secondaryNav}>
         <div className="container" style={{ display: 'flex', gap: '32px' }}>
-          <a href="#home" onClick={(e) => handleNav('', e)} style={{ ...styles.navLink, ...(currentPath === '' ? styles.activeNavLink : {}) }}>Home</a>
+          <a href="#home" onClick={(e) => handleNav('', e)} style={{ ...styles.navLink, ...((currentPath === '' || currentPath === 'home') ? styles.activeNavLink : {}) }}>Home</a>
           <a href="#shop" onClick={(e) => handleNav('shop', e)} style={{ ...styles.navLink, ...(currentPath === 'shop' ? styles.activeNavLink : {}) }}>Our Fabrics</a>
           <a href="#new-arrivals" onClick={(e) => handleNav('new-arrivals', e)} style={{ ...styles.navLink, ...(currentPath === 'new-arrivals' ? styles.activeNavLink : {}) }}>New Arrivals</a>
           <a href="#best-sellers" onClick={(e) => handleNav('best-sellers', e)} style={{ ...styles.navLink, ...(currentPath === 'best-sellers' ? styles.activeNavLink : {}) }}>Best Sellers</a>

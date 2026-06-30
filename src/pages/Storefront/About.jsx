@@ -51,6 +51,25 @@ export const About = () => {
             />
           </div>
         </div>
+
+        {/* Content Section 3: Branches */}
+        <div style={{ marginTop: '80px', borderTop: '1px solid #e2e8f0', paddingTop: '60px' }}>
+          <h2 style={{ ...styles.sectionTitle, textAlign: 'center', marginBottom: '40px' }}>Visit Our Stores in Vijayawada</h2>
+          <div className="grid grid-3 gap-4">
+            <div style={styles.branchCard}>
+              <h3 style={styles.branchName}>Governerpet Branch (Main Hub)</h3>
+              <p style={styles.branchAddress}>29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, Andhra Pradesh 520002.</p>
+            </div>
+            <div style={styles.branchCard}>
+              <h3 style={styles.branchName}>Brindavan Colony Branch</h3>
+              <p style={styles.branchAddress}>40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, Andhra Pradesh 520010.</p>
+            </div>
+            <div style={styles.branchCard}>
+              <h3 style={styles.branchName}>Labbipet / Bunder Road Branch</h3>
+              <p style={styles.branchAddress}>Located near Kataragada Pichaiah Street (YVR Hospital Lane).</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -112,5 +131,24 @@ const styles = {
     lineHeight: '1.8',
     color: '#475569',
     marginBottom: '16px',
+  },
+  branchCard: {
+    backgroundColor: '#fff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '8px',
+    padding: '24px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+  },
+  branchName: {
+    fontSize: '18px',
+    fontFamily: 'var(--font-serif)',
+    fontWeight: '700',
+    color: '#6c1425',
+    marginBottom: '12px',
+  },
+  branchAddress: {
+    fontSize: '14px',
+    color: '#475569',
+    lineHeight: '1.6',
   }
 };

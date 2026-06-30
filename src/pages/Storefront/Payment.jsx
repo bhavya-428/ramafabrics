@@ -1,8 +1,29 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Payment = ({ orderId, setRoute }) => {
   const { orders, settings, getUpiUrl, getWhatsAppLink } = useContext(ShopContext);
+  const [showQR, setShowQR] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [qrExpired, setQrExpired] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    if (showQR && !qrExpired && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (showQR && timeLeft === 0) {
+      setQrExpired(true);
+    }
+    return () => clearInterval(timer);
+  }, [showQR, timeLeft, qrExpired]);
+
+  const handleGenerateQR = () => {
+    setShowQR(true);
+    setQrExpired(false);
+    setTimeLeft(120);
+  };
 
   const order = orders.find(o => o.id === orderId);
 
@@ -38,13 +59,42 @@ export const Payment = ({ orderId, setRoute }) => {
           <h3 style={styles.qrTitle}>Scan with BHIM UPI App</h3>
           <p style={styles.qrDesc}>Use GPay, PhonePe, Paytm, or any UPI app to scan this QR code.</p>
           
-          <div style={styles.qrWrapper}>
-            <img src={qrCodeImageUrl} alt="Payment UPI QR Code" style={styles.qrImage} />
-            <div style={styles.qrBorderCorner1}></div>
-            <div style={styles.qrBorderCorner2}></div>
-            <div style={styles.qrBorderCorner3}></div>
-            <div style={styles.qrBorderCorner4}></div>
-          </div>
+          {showQR ? (
+            qrExpired ? (
+              <div style={{ ...styles.qrWrapper, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '232px' }}>
+                <span style={{ color: 'var(--color-danger)', fontWeight: 'bold', marginBottom: '16px' }}>QR Code Expired</span>
+                <button className="btn btn-primary" onClick={handleGenerateQR}>Regenerate QR</button>
+              </div>
+            ) : (
+              <div 
+                style={styles.qrWrapper}
+                onContextMenu={(e) => e.preventDefault()}
+              >
+                <img 
+                  src={qrCodeImageUrl} 
+                  alt="Payment UPI QR Code" 
+                  style={styles.qrImage} 
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                />
+                <div style={styles.qrBorderCorner1}></div>
+                <div style={styles.qrBorderCorner2}></div>
+                <div style={styles.qrBorderCorner3}></div>
+                <div style={styles.qrBorderCorner4}></div>
+                <div style={{ textAlign: 'center', marginTop: '16px', color: 'var(--color-danger)', fontWeight: 'bold', fontSize: '14px' }}>
+                  Expires in {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                </div>
+              </div>
+            )
+          ) : (
+            <button 
+              className="btn btn-primary" 
+              onClick={handleGenerateQR}
+              style={{ marginBottom: '28px', padding: '16px 32px' }}
+            >
+              Generate QR
+            </button>
+          )}
 
           <div style={styles.vpaDetails}>
             <span style={styles.vpaLabel}>Payee UPI VPA:</span>

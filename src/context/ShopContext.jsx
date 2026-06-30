@@ -4,7 +4,7 @@ export const ShopContext = createContext();
 
 // Dynamic generator for 100 realistic fabric types with clean stock photos
 const generateProducts = () => {
-  const categories = ['Silk', 'Cotton', 'Handloom', 'Georgette', 'Ready-to-Wear'];
+  const categories = ['Cotton', 'Silk', 'Linen', 'Rayon', 'Muslin', 'Organza', 'Chiffon', 'Velvet', 'Embroidery', 'Printed Fabrics', 'Dress Materials'];
   
   const adjectives = [
     'Royal', 'Traditional', 'Contemporary', 'Artisanal', 'Exquisite', 
@@ -15,9 +15,15 @@ const generateProducts = () => {
   const types = {
     'Silk': ['Banarasi Brocade', 'Batik Dye Silk', 'Tussar Raw Silk', 'Kanchipuram Silk', 'Chanderi Silk', 'Mysore Soft Crepe'],
     'Cotton': ['Mangalagiri Zari Cotton', 'Jaipuri Block Print', 'Kalamkari Handblock', 'Lakhnavi Chikankari', 'Organic Khadi', 'Mulmul Cotton'],
-    'Handloom': ['Sambhalpuri Ikat', 'Pochampally Handloom', 'Bhagalpuri Linen', 'Venkatagiri Zari', 'Jamdani Handwoven', 'Phulkari Embroidery'],
-    'Georgette': ['Bandhani Tie-Dye georgette', 'Chiffon Floral Print', 'Brocade Border Crepe', 'Sequinned Net georgette', 'Satin Print', 'Shimmer georgette'],
-    'Ready-to-Wear': ['Anarkali Suit Set', 'A-Line Floral Kurti', 'Angrakha Kurta set', 'Palazzo Kurta Pair', 'Straight-Cut Salwar Set', 'Festive Silk Sherwani']
+    'Linen': ['Pure Linen', 'Linen Blend', 'Printed Linen', 'Linen Zari'],
+    'Rayon': ['Rayon Crepe', 'Rayon Slub', 'Soft Rayon'],
+    'Muslin': ['Pure Muslin', 'Printed Muslin', 'Muslin Silk'],
+    'Organza': ['Pure Organza', 'Tissue Organza', 'Organza Embroidery'],
+    'Chiffon': ['Pure Chiffon', 'Printed Chiffon', 'Chiffon Zari'],
+    'Velvet': ['Micro Velvet', 'Crushed Velvet', 'Velvet Sequence'],
+    'Embroidery': ['Thread Work', 'Zari Work', 'Sequence Work'],
+    'Printed Fabrics': ['Digital Print', 'Block Print', 'Floral Print'],
+    'Dress Materials': ['Unstitched Suit Set', 'Kurti Material', 'Lehenga Fabric']
   };
 
   const colors = [
@@ -38,47 +44,25 @@ const generateProducts = () => {
   // A pool of high-quality Unsplash image IDs matching each fabric category (ONLY pure fabric textures)
   const unsplashImageIds = {
     'Silk': [
-      '1618005182384-a83a8bd57fbe', // Teal satin waves
-      '1574169208507-84376144848b', // Crimson silk satin
-      '1513519245088-0e12902e5a38', // Gold satin texture
-      '1548036328-c9fa89d128fa', // Royal blue silk folds
-      '1603252109303-2751441dd157', // Emerald green shiny silk
-      '1617627143750-d86bc21e42bb', // Magenta pink silk folds
-      '1621600411688-4be93cd68504', // Crimson velvet texture
-      '1609144415840-0de31cd85172'  // Purple velvet fabric
+      '1618005182384-a83a8bd57fbe',
+      '1574169208507-84376144848b',
+      '1513519245088-0e12902e5a38',
+      '1548036328-c9fa89d128fa'
     ],
     'Cotton': [
-      '1606744824163-985d376605aa', // Ivory cotton linen texture
-      '1597484211616-396f17ed1997', // Soft indigo cotton
-      '1528459801416-a9e53bbf4e17', // Pastel peach canvas cotton
-      '1563245372-f21724e3856d', // Printed block cotton
-      '1620799140408-edc6dcb6d633', // Plain linen cotton fold
-      '1583847268964-b28dc8f51f92'  // Pink cotton block print
+      '1606744824163-985d376605aa',
+      '1597484211616-396f17ed1997',
+      '1528459801416-a9e53bbf4e17'
     ],
-    'Handloom': [
-      '1544816155-12df9643f363', // Tribal handwoven patterns
-      '1508285869451-140578618bb9', // Organic weave texture
-      '1528254338168-da2944b28c1c', // Traditional ikat patterns
-      '1605721911519-3dfeb3be25e7', // Colorful handblock print
-      '1598048145874-f9566c3a270a', // Linen fabric folds close-up
-      '1596462502278-27bfdc403348'  // Stack of colorful folded fabrics
-    ],
-    'Georgette': [
-      '1588854337236-6889d631faa8', // Floral print chiffon georgette
-      '1579783900882-c0d3dad7b119', // Watercolor artistic georgette
-      '1543087903-1ac2ec7aa8c5', // Flowy print patterns
-      '1550684848-fac1c5b4e853', // Patterned chiffon drape
-      '1601752943749-7dd8d89f407a', // Fine georgette weave
-      '1618220179428-22790b461013'  // Teal-green georgette print
-    ],
-    'Ready-to-Wear': [
-      '1596462502278-27bfdc403348', // Stack of premium colorful ethnic fabrics
-      '1589156280159-27698a70f29e', // Folded cotton garment texture stack
-      '1584917865442-de89df76afd3', // Gold designer fabric folds
-      '1620799140408-edc6dcb6d633', // Clean linen clothing fabric close up
-      '1508285869451-140578618bb9', // Textured fabric weave close up
-      '1543087903-1ac2ec7aa8c5'  // Intricate block printed clothing fabric drape
-    ]
+    'Linen': ['1598048145874-f9566c3a270a', '1620799140408-edc6dcb6d633'],
+    'Rayon': ['1579783900882-c0d3dad7b119'],
+    'Muslin': ['1528459801416-a9e53bbf4e17'],
+    'Organza': ['1588854337236-6889d631faa8'],
+    'Chiffon': ['1543087903-1ac2ec7aa8c5'],
+    'Velvet': ['1621600411688-4be93cd68504', '1609144415840-0de31cd85172'],
+    'Embroidery': ['1544816155-12df9643f363'],
+    'Printed Fabrics': ['1563245372-f21724e3856d'],
+    'Dress Materials': ['1596462502278-27bfdc403348']
   };
 
   const results = [];
@@ -169,16 +153,13 @@ const initialSettings = {
 };
 
 export const ShopProvider = ({ children }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   // Database States loaded from LocalStorage or seeded with initial data
   const [products, setProducts] = useState(() => {
-    const saved = localStorage.getItem('rf_products');
+    const saved = localStorage.getItem('rf_products_v2');
     if (saved) {
-      const parsed = JSON.parse(saved);
-      // Migration: Ensure we load the complete 100 fabrics collection with pure fabric textures (no models/machinery)
-      if (parsed.length < 100 || !parsed.some(p => p.image !== undefined) || parsed.some(p => p.image && p.image.includes('photo-1610030469983-98e550d6193c'))) {
-        return initialProducts;
-      }
-      return parsed;
+      return JSON.parse(saved);
     }
     return initialProducts;
   });
@@ -240,7 +221,7 @@ export const ShopProvider = ({ children }) => {
 
   // Sync to LocalStorage on updates
   useEffect(() => {
-    localStorage.setItem('rf_products', JSON.stringify(products));
+    localStorage.setItem('rf_products_v2', JSON.stringify(products));
   }, [products]);
 
   useEffect(() => {
@@ -516,6 +497,8 @@ _I have completed the payment via UPI. Please confirm my order!_`;
   return (
     <ShopContext.Provider
       value={{
+        searchQuery,
+        setSearchQuery,
         products,
         offers,
         orders,

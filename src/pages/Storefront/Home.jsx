@@ -1,8 +1,47 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
-  const { products, addToCart } = useContext(ShopContext);
+  const { products, addToCart, cart, updateCartQty } = useContext(ShopContext);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const heroBanners = [
+    {
+      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1600&q=80',
+      tag: 'PREMIUM COLLECTION',
+      title: 'WEDDING FABRICS',
+      subtitle: 'Exclusive fabrics for your special moments'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80',
+      tag: 'NEW ARRIVALS',
+      title: 'PURE SILK ELEGANCE',
+      subtitle: 'Discover our latest Banarasi collection'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=1600&q=80',
+      tag: 'SUMMER ESSENTIALS',
+      title: 'BREATHABLE COTTONS',
+      subtitle: 'Stay cool with our handblock prints'
+    },
+    {
+      image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?auto=format&fit=crop&w=1600&q=80',
+      tag: 'DESIGNER CHOICE',
+      title: 'FLORAL ORGANZA',
+      subtitle: 'Perfect for contemporary drapes'
+    }
+  ];
+
+  // Auto slide every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [heroBanners.length]);
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? heroBanners.length - 1 : prev - 1));
 
   const featuredProducts = products.filter(p => p.isFeatured || p.rating >= 4.7).slice(0, 4);
 
@@ -43,16 +82,16 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
       {/* 1. HERO SECTION */}
       <section style={styles.heroSection}>
         <div className="container" style={{ position: 'relative' }}>
-          <div style={styles.heroBanner}>
+          <div style={{ ...styles.heroBanner, backgroundImage: `url(${heroBanners[currentSlide].image})` }}>
             {/* Left Nav Arrow */}
-            <div style={styles.heroNavLeft}>
+            <div style={styles.heroNavLeft} onClick={prevSlide}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </div>
             
             <div style={styles.heroContent}>
-              <span style={styles.heroTag}>PREMIUM COLLECTION</span>
-              <h1 style={styles.heroTitle}>WEDDING FABRICS</h1>
-              <p style={styles.heroSubtitle}>Exclusive fabrics for your special moments</p>
+              <span style={styles.heroTag}>{heroBanners[currentSlide].tag}</span>
+              <h1 style={styles.heroTitle}>{heroBanners[currentSlide].title}</h1>
+              <p style={styles.heroSubtitle}>{heroBanners[currentSlide].subtitle}</p>
               <button 
                 onClick={() => { setCategoryFilter('All'); setRoute('shop'); }} 
                 style={styles.heroBtn}
@@ -62,16 +101,19 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
             </div>
 
             {/* Right Nav Arrow */}
-            <div style={styles.heroNavRight}>
+            <div style={styles.heroNavRight} onClick={nextSlide}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </div>
 
             {/* Dots */}
             <div style={styles.heroDots}>
-              <div style={{...styles.dot, backgroundColor: '#C5A059'}}></div>
-              <div style={styles.dot}></div>
-              <div style={styles.dot}></div>
-              <div style={styles.dot}></div>
+              {heroBanners.map((_, idx) => (
+                <div 
+                  key={idx} 
+                  style={{ ...styles.dot, backgroundColor: currentSlide === idx ? '#C5A059' : 'rgba(255,255,255,0.5)' }}
+                  onClick={() => setCurrentSlide(idx)}
+                ></div>
+              ))}
             </div>
           </div>
         </div>
@@ -131,10 +173,18 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
                     </div>
                   </div>
                 </div>
-                <button style={styles.addToCartBtn} onClick={() => addToCart(product, 1)}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                  Add to Cart
-                </button>
+                {cart.find(c => c.product.id === product.id) ? (
+                  <div style={{...styles.addToCartBtn, display: 'flex', justifyContent: 'space-between', padding: '8px 16px', backgroundColor: '#FDF8F5', color: '#1e293b', borderTop: '1px solid #f1f5f9'}}>
+                    <button style={styles.qtyBtn} onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}>-</button>
+                    <span style={{fontWeight: '700'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
+                    <button style={styles.qtyBtn} onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}>+</button>
+                  </div>
+                ) : (
+                  <button style={styles.addToCartBtn} onClick={() => addToCart(product, 1)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    Add to Cart
+                  </button>
+                )}
               </div>
             );
           })}
@@ -191,13 +241,13 @@ const styles = {
     width: '100%',
     height: '400px',
     borderRadius: '16px',
-    backgroundImage: 'url(https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1600&q=80)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
     position: 'relative',
     display: 'flex',
     alignItems: 'center',
     overflow: 'hidden',
+    transition: 'background-image 0.5s ease-in-out',
   },
   heroNavLeft: {
     position: 'absolute',
@@ -432,6 +482,19 @@ const styles = {
     width: '100%',
     borderTopLeftRadius: '0',
     borderTopRightRadius: '0',
+  },
+  qtyBtn: {
+    backgroundColor: '#fff',
+    border: '1px solid #cbd5e1',
+    borderRadius: '4px',
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    fontWeight: '700',
+    color: '#64748b'
   },
   featuresFooter: {
     backgroundColor: '#FDF8F5',
