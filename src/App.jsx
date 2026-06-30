@@ -14,6 +14,11 @@ import { Orders } from './pages/Storefront/Orders';
 import { Offers } from './pages/Storefront/Offers';
 import { Contact } from './pages/Storefront/Contact';
 import { Login } from './pages/Storefront/Login';
+import { Wishlist } from './pages/Storefront/Wishlist';
+import { Profile } from './pages/Storefront/Profile';
+import { About } from './pages/Storefront/About';
+import { NewArrivals } from './pages/Storefront/NewArrivals';
+import { BestSellers } from './pages/Storefront/BestSellers';
 import { AdminPanel } from './pages/Admin/AdminPanel';
 
 function AppContent() {
@@ -125,6 +130,16 @@ function AppContent() {
         return <Contact />;
       case 'login':
         return <Login setRoute={handleSetRoute} />;
+      case 'wishlist':
+        return <Wishlist setRoute={handleSetRoute} />;
+      case 'profile':
+        return <Profile setRoute={handleSetRoute} />;
+      case 'about':
+        return <About setRoute={handleSetRoute} />;
+      case 'new-arrivals':
+        return <NewArrivals setRoute={handleSetRoute} setSelectedProductId={handleSelectProductId} />;
+      case 'best-sellers':
+        return <BestSellers setRoute={handleSetRoute} setSelectedProductId={handleSelectProductId} />;
       case 'admin':
         return (
           <AdminPanel 

@@ -2,8 +2,7 @@ import React, { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
 
 export const Navbar = ({ currentPath, setRoute }) => {
-  const { cart, currentUser, logout } = useContext(ShopContext);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { cart, currentUser } = useContext(ShopContext);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -14,192 +13,82 @@ export const Navbar = ({ currentPath, setRoute }) => {
 
   return (
     <header style={styles.header}>
-      <div className="container flex align-center justify-between" style={{ height: '100%' }}>
-        {/* Brand Logo */}
-        <a href="#home" onClick={(e) => handleNav('', e)} style={styles.logoContainer}>
-          <div style={styles.logoCircle}>
-            <img src="/logo.png" alt="Rama Fabrics Logo" style={styles.logoImage} />
-          </div>
-          <div style={styles.logoTextWrapper}>
-            <span style={styles.logoTitle}>RAMA FABRICS</span>
-          </div>
-        </a>
+     
 
-        {/* Desktop Navigation Links */}
-        <nav style={styles.navLinks}>
-          <a
-            href="#home"
-            onClick={(e) => handleNav('', e)}
-            style={{
-              ...styles.navLink,
-              ...(currentPath === '' ? styles.activeNavLink : {})
-            }}
-          >
-            Home
-          </a>
-          <a
-            href="#shop"
-            onClick={(e) => handleNav('shop', e)}
-            style={{
-              ...styles.navLink,
-              ...(currentPath === 'shop' ? styles.activeNavLink : {})
-            }}
-          >
-            Shop Fabrics
-          </a>
-          <a
-            href="#offers"
-            onClick={(e) => handleNav('offers', e)}
-            style={{
-              ...styles.navLink,
-              ...(currentPath === 'offers' ? styles.activeNavLink : {})
-            }}
-          >
-            Offers
-          </a>
-          <a
-            href="#contact"
-            onClick={(e) => handleNav('contact', e)}
-            style={{
-              ...styles.navLink,
-              ...(currentPath === 'contact' ? styles.activeNavLink : {})
-            }}
-          >
-            Contact Us
-          </a>
-          {currentUser && (
-            <a
-              href="#orders"
-              onClick={(e) => handleNav('orders', e)}
-              style={{
-                ...styles.navLink,
-                ...(currentPath === 'orders' ? styles.activeNavLink : {})
-              }}
-            >
-              My Orders
-            </a>
-          )}
-        </nav>
-
-        {/* Action Buttons (Cart, Account) */}
-        <div style={styles.actions}>
+      {/* Main Header (Logo, Search, Icons) */}
+      <div style={styles.mainHeader}>
+        <div className="container flex align-center justify-between" style={{ height: '100%', gap: '40px' }}>
           
-          {/* Cart Icon */}
-          <a href="#cart" onClick={(e) => handleNav('cart', e)} style={styles.cartIconWrapper}>
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              style={{ color: currentPath === 'cart' ? 'var(--color-secondary)' : 'var(--color-primary-dark)' }}
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-            {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
+          {/* Logo */}
+          <a href="#home" onClick={(e) => handleNav('', e)} style={styles.logoContainer}>
+            <div style={styles.logoIcon}>R</div>
+            <div style={styles.logoTextWrapper}>
+              <span style={styles.logoTitle}>RAMA</span>
+              <span style={styles.logoSubtitle}>FABRICS</span>
+              <span style={styles.logoTagline}>Your Style. Our Fabrics.</span>
+            </div>
           </a>
 
-          {/* Profile Session */}
-          {/* Profile Session */}
-          {currentUser ? (
-            <div style={{ position: 'relative' }}>
-              <button 
-                onClick={() => setDropdownOpen(!dropdownOpen)} 
-                style={styles.profileTrigger}
-                className="navbar-profile-trigger"
-              >
-                <div style={styles.avatarCircle}>
-                  {currentUser.name ? currentUser.name.charAt(0).toUpperCase() : 'U'}
-                </div>
-                <span style={styles.profileName}>
-                  {currentUser.name.split(' ')[0] || currentUser.email.split('@')[0]}
-                </span>
-                {currentUser.isAdmin && (
-                  <span style={styles.admBadge}>ADM</span>
-                )}
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#64748b', marginLeft: '4px' }}>
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </button>
+          {/* Search Bar */}
+          <div style={styles.searchContainer}>
+            <input 
+              type="text" 
+              placeholder="Search by fabric name, material, color, category..." 
+              style={styles.searchInput}
+            />
+            <button style={styles.searchBtn}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
 
-              {dropdownOpen && (
-                <>
-                  <div style={styles.dropdownOverlay} onClick={() => setDropdownOpen(false)} />
-                  <div style={styles.dropdownCard}>
-                    <div style={styles.dropdownHeader}>
-                      <span style={styles.dropdownUser}>{currentUser.name}</span>
-                      <span style={styles.dropdownEmail}>{currentUser.email}</span>
-                    </div>
-                    <div style={styles.divider} />
-                    <ul style={styles.dropdownList}>
-                      {currentUser.isAdmin && (
-                        <li>
-                          <a 
-                            href="/admin.html"
-                            style={styles.dropdownItem}
-                            onClick={() => setDropdownOpen(false)}
-                            className="navbar-profile-item"
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C5A059" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
-                              <rect x="3" y="3" width="7" height="9" />
-                              <rect x="14" y="3" width="7" height="5" />
-                              <rect x="14" y="12" width="7" height="9" />
-                              <rect x="3" y="16" width="7" height="5" />
-                            </svg>
-                            <span style={{ color: '#C5A059', fontWeight: '600' }}>Admin Panel</span>
-                          </a>
-                        </li>
-                      )}
-                      <li>
-                        <a 
-                          href="#orders" 
-                          style={styles.dropdownItem}
-                          onClick={(e) => {
-                            setDropdownOpen(false);
-                            handleNav('orders', e);
-                          }}
-                          className="navbar-profile-item"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
-                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <path d="M16 10a4 4 0 0 1-8 0" />
-                          </svg>
-                          My Orders
-                        </a>
-                      </li>
-                      <li style={{ borderTop: '1px solid #f1f5f9', marginTop: '4px', paddingTop: '4px' }}>
-                        <button 
-                          onClick={() => {
-                            setDropdownOpen(false);
-                            logout();
-                          }} 
-                          style={{ ...styles.dropdownItem, width: '100%', border: 'none', background: 'none', cursor: 'pointer', textAlign: 'left' }}
-                          className="navbar-profile-item"
-                        >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '10px' }}>
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
-                          </svg>
-                          <span style={{ color: '#ef4444' }}>Logout</span>
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                </>
-              )}
-            </div>
-          ) : (
-            <a href="#login" onClick={(e) => handleNav('login', e)} style={styles.loginBtn}>
-              Sign In
+          {/* Action Icons */}
+          <div style={styles.actions}>
+            {/* Wishlist */}
+            <a href="#wishlist" onClick={(e) => handleNav('wishlist', e)} style={styles.actionItem}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              <span style={styles.actionText}>Wishlist</span>
             </a>
-          )}
+
+            {/* Cart */}
+            <a href="#cart" onClick={(e) => handleNav('cart', e)} style={styles.actionItem}>
+              <div style={{ position: 'relative' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
+              </div>
+              <span style={styles.actionText}>Cart</span>
+            </a>
+
+            {/* Profile */}
+            <a href="#profile" onClick={(e) => currentUser ? handleNav('profile', e) : handleNav('login', e)} style={styles.actionItem}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              <span style={styles.actionText}>Profile</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary Navigation */}
+      <div style={styles.secondaryNav}>
+        <div className="container" style={{ display: 'flex', gap: '32px' }}>
+          <a href="#home" onClick={(e) => handleNav('', e)} style={{ ...styles.navLink, ...(currentPath === '' ? styles.activeNavLink : {}) }}>Home</a>
+          <a href="#shop" onClick={(e) => handleNav('shop', e)} style={{ ...styles.navLink, ...(currentPath === 'shop' ? styles.activeNavLink : {}) }}>Our Fabrics</a>
+          <a href="#new-arrivals" onClick={(e) => handleNav('new-arrivals', e)} style={{ ...styles.navLink, ...(currentPath === 'new-arrivals' ? styles.activeNavLink : {}) }}>New Arrivals</a>
+          <a href="#best-sellers" onClick={(e) => handleNav('best-sellers', e)} style={{ ...styles.navLink, ...(currentPath === 'best-sellers' ? styles.activeNavLink : {}) }}>Best Sellers</a>
+          <a href="#offers" onClick={(e) => handleNav('offers', e)} style={{ ...styles.navLink, ...(currentPath === 'offers' ? styles.activeNavLink : {}) }}>Offers</a>
+          <a href="#about" onClick={(e) => handleNav('about', e)} style={{ ...styles.navLink, ...(currentPath === 'about' ? styles.activeNavLink : {}) }}>About Us</a>
+          <a href="#contact" onClick={(e) => handleNav('contact', e)} style={{ ...styles.navLink, ...(currentPath === 'contact' ? styles.activeNavLink : {}) }}>Contact Us</a>
         </div>
       </div>
     </header>
@@ -208,227 +97,200 @@ export const Navbar = ({ currentPath, setRoute }) => {
 
 const styles = {
   header: {
-    height: '76px',
-    backgroundColor: 'var(--color-bg-white)',
-    borderBottom: '1px solid var(--color-border)',
+    backgroundColor: '#fff',
+    borderBottom: '1px solid #f1f5f9',
     position: 'sticky',
     top: 0,
     zIndex: 100,
-    boxShadow: 'var(--shadow-sm)'
+    width: '100%',
+    fontFamily: 'var(--font-sans)',
+  },
+  announcementBar: {
+    backgroundColor: '#6C1425',
+    color: '#FDF2E9',
+    fontSize: '12px',
+    fontWeight: '500',
+    padding: '8px 0',
+  },
+  announcementContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  announcementItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  },
+  mainHeader: {
+    height: '90px',
+    borderBottom: '1px solid #f8fafc',
   },
   logoContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
+    textDecoration: 'none',
   },
-  logoCircle: {
-    width: '44px',
-    height: '44px',
+  logoIcon: {
+    width: '56px',
+    height: '56px',
     borderRadius: '50%',
-    overflow: 'hidden',
-    border: '2px solid var(--color-primary)',
+    border: '2px solid #C5A059',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
-    boxShadow: 'var(--shadow-sm)'
-  },
-  logoImage: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover'
+    color: '#6C1425',
+    fontSize: '32px',
+    fontFamily: 'var(--font-serif)',
+    fontWeight: '700',
+    background: '#fff',
   },
   logoTextWrapper: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    lineHeight: '1.1',
   },
   logoTitle: {
+    color: '#6C1425',
+    fontSize: '24px',
+    fontWeight: '800',
     fontFamily: 'var(--font-serif)',
-    fontWeight: '700',
-    fontSize: '18px',
-    letterSpacing: '1px',
-    color: 'var(--color-primary-dark)',
-    lineHeight: '1.2'
+    letterSpacing: '2px',
   },
   logoSubtitle: {
-    fontSize: '10px',
-    letterSpacing: '2px',
+    color: '#6C1425',
+    fontSize: '16px',
     fontWeight: '600',
-    color: 'var(--color-secondary-dark)',
-    textTransform: 'uppercase'
+    fontFamily: 'var(--font-serif)',
+    letterSpacing: '3px',
   },
-  navLinks: {
+  logoTagline: {
+    color: '#C5A059',
+    fontSize: '11px',
+    fontWeight: '600',
+    marginTop: '2px',
+  },
+  searchContainer: {
+    flexGrow: 1,
+    maxWidth: '600px',
+    display: 'flex',
+    position: 'relative',
+  },
+  searchInput: {
+    width: '100%',
+    padding: '12px 20px',
+    paddingRight: '60px',
+    borderRadius: '8px',
+    border: '1px solid #E2E8F0',
+    fontSize: '14px',
+    color: '#333',
+    backgroundColor: '#F8FAFC',
+    outline: 'none',
+  },
+  searchBtn: {
+    position: 'absolute',
+    right: '0',
+    top: '0',
+    height: '100%',
+    width: '56px',
+    backgroundColor: '#6C1425',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '0 8px 8px 0',
+    cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    gap: '28px'
-  },
-  navLink: {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '14px',
-    fontWeight: '500',
-    color: 'var(--color-text-dark)',
-    padding: '8px 0',
-    borderBottom: '2px solid transparent',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px'
-  },
-  activeNavLink: {
-    color: 'var(--color-primary)',
-    borderBottom: '2px solid var(--color-secondary)',
-    fontWeight: '700'
+    justifyContent: 'center',
   },
   actions: {
     display: 'flex',
-    alignItems: 'center',
-    gap: '20px'
+    gap: '32px',
   },
-  adminBtn: {
-    fontSize: '12px',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    color: 'var(--color-text-muted)',
-    border: '1px solid var(--color-border)',
-    padding: '6px 12px',
-    borderRadius: '4px'
-  },
-  activeAdminBtn: {
-    color: 'var(--color-primary)',
-    borderColor: 'var(--color-primary)',
-    backgroundColor: 'var(--color-border-light)'
-  },
-  cartIconWrapper: {
-    position: 'relative',
+  actionItem: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    width: '40px',
-    height: '40px',
-    borderRadius: '50%',
-    transition: 'var(--transition-fast)'
+    gap: '4px',
+    color: '#475569',
+    cursor: 'pointer',
+    position: 'relative',
+    textDecoration: 'none',
+  },
+  actionText: {
+    fontSize: '11px',
+    fontWeight: '500',
   },
   cartBadge: {
     position: 'absolute',
-    top: '2px',
-    right: '2px',
-    backgroundColor: 'var(--color-accent)',
-    color: 'white',
+    top: '-6px',
+    right: '-8px',
+    backgroundColor: '#C5A059',
+    color: '#fff',
     fontSize: '10px',
     fontWeight: '700',
-    width: '18px',
-    height: '18px',
+    width: '16px',
+    height: '16px',
     borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  profileTrigger: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    padding: '4px 12px 4px 4px',
-    borderRadius: '9999px',
-    cursor: 'pointer',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    transition: 'all 0.2s ease',
-  },
-  avatarCircle: {
-    width: '28px',
-    height: '28px',
-    borderRadius: '50%',
-    backgroundColor: '#ef4444',
-    color: '#ffffff',
-    fontWeight: '700',
-    fontSize: '12px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  profileName: {
-    fontSize: '12px',
+  secondaryNav: {
+    backgroundColor: '#fff',
+    borderBottom: '1px solid #E2E8F0',
+    padding: '0',
+  },
+  navLink: {
+    fontSize: '14px',
+    fontWeight: '500',
+    color: '#334155',
+    padding: '16px 0',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    borderBottom: '2px solid transparent',
+  },
+  activeNavLink: {
+    color: '#6C1425',
     fontWeight: '600',
-    color: '#1e293b',
+    borderBottomColor: '#6C1425',
   },
-  admBadge: {
+  dropdownArrow: {
     fontSize: '9px',
-    fontWeight: '700',
-    backgroundColor: '#ffe4e6',
-    color: '#e11d48',
-    padding: '1px 5px',
-    borderRadius: '4px',
-    letterSpacing: '0.5px',
-  },
-  dropdownOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 90,
+    color: '#94A3B8',
   },
   dropdownCard: {
     position: 'absolute',
-    top: 'calc(100% + 8px)',
+    top: '100%',
     right: 0,
-    width: '220px',
-    backgroundColor: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '12px',
-    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)',
-    zIndex: 100,
-    padding: '10px 0',
-    textAlign: 'left',
+    backgroundColor: '#fff',
+    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+    borderRadius: '8px',
+    padding: '8px 0',
+    minWidth: '150px',
+    zIndex: 110,
+    border: '1px solid #E2E8F0',
   },
   dropdownHeader: {
-    padding: '4px 16px 8px 16px',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  dropdownUser: {
+    padding: '8px 16px',
+    borderBottom: '1px solid #f1f5f9',
+    fontWeight: '600',
     fontSize: '13px',
-    fontWeight: '700',
-    color: '#1e293b',
-  },
-  dropdownEmail: {
-    fontSize: '11px',
-    color: '#64748b',
-    marginTop: '2px',
-  },
-  divider: {
-    height: '1px',
-    backgroundColor: '#f1f5f9',
-    margin: '6px 0',
-  },
-  dropdownList: {
-    listStyle: 'none',
-    padding: '0 6px',
-    margin: 0,
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2px',
+    color: '#334155',
   },
   dropdownItem: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '6px 10px',
-    borderRadius: '6px',
-    fontSize: '12px',
-    fontWeight: '600',
-    color: '#475569',
-    transition: 'all 0.2s ease',
-    textDecoration: 'none',
-  },
-  loginBtn: {
+    display: 'block',
+    padding: '10px 16px',
     fontSize: '13px',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    backgroundColor: 'var(--color-primary)',
-    color: 'white',
-    padding: '8px 16px',
-    borderRadius: '20px',
-    transition: 'var(--transition-fast)'
+    color: '#475569',
+    textDecoration: 'none',
+    border: 'none',
+    background: 'none',
+    width: '100%',
+    textAlign: 'left',
+    cursor: 'pointer',
   }
 };

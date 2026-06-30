@@ -1,12 +1,37 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const ProductDetail = ({ productId, setRoute }) => {
-  const { products, addToCart } = useContext(ShopContext);
+  const { 
+    products, 
+    addToCart, 
+    wishlist, 
+    toggleWishlist, 
+    recentlyViewed, 
+    addToRecentlyViewed 
+  } = useContext(ShopContext);
+
   const [quantity, setQuantity] = useState(1);
   const [successMsg, setSuccessMsg] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(0);
 
-  const product = products.find(p => p.id === productId);
+  const product = products.find((p) => p.id === productId);
+
+  // Gallery images mock
+  const [activeImage, setActiveImage] = useState('');
+
+  // Sync active image when productId changes
+  useEffect(() => {
+    if (product) {
+      setActiveImage(product.image);
+      // Track as recently viewed
+      addToRecentlyViewed(product.id);
+      // Reset quantity
+      setQuantity(1);
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+  }, [productId, product]);
 
   if (!product) {
     return (
@@ -42,132 +67,254 @@ export const ProductDetail = ({ productId, setRoute }) => {
     setRoute('cart');
   };
 
+  const handleRecommendClick = (recId) => {
+    setRoute(`product-detail/${recId}`); // Trigger hash change internally
+  };
+
+  const hasDiscount = product.originalPrice && product.price < product.originalPrice;
+  const discountPercent = hasDiscount 
+    ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
+    : 0;
+
+  // Alternate images for the mock gallery
+  const galleryImages = [
+    product.image,
+    'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80',
+    'https://images.unsplash.com/photo-1508285869451-140578618bb9?auto=format&fit=crop&w=600&q=80'
+  ];
+
+  // Colors mock (using gradients from colors list)
+  const mockColors = [
+    { name: 'Primary Specimen', color: product.colorPattern || '#7D1D2B' },
+    { name: 'Alternative Tint', color: 'linear-gradient(135deg, #cbd5e1 0%, #475569 100%)' },
+    { name: 'Highlight Shade', color: 'linear-gradient(135deg, #F59E0B 0%, #D4AF37 100%)' }
+  ];
+
+  // Recently Viewed Fabrics list
+  const recentlyViewedItems = products
+    .filter((p) => recentlyViewed.includes(p.id) && p.id !== product.id)
+    .slice(0, 4);
+
   return (
-    <div className="container animate-fade-in" style={styles.detailContainer}>
-      {/* Back link */}
+    <div className="container animate-fade-in page-bottom-padding" style={styles.detailContainer}>
+      
+      {/* 1. BACK LINK */}
       <button onClick={() => setRoute('shop')} style={styles.backBtn}>
         ← Back to Shop Collection
       </button>
 
       <div style={styles.layout}>
-        {/* Swatch Display */}
-        <div style={styles.swatchColumn}>
-          <div style={{ ...styles.swatchBig, backgroundImage: `url(${product.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-            <span style={styles.swatchLabel}>Fabric Specimen Zoom</span>
+        
+        {/* 2. GALLERY IMAGE COLUMN */}
+        <div style={styles.galleryColumn}>
+          <div style={styles.mainImageWrapper}>
+            <img src={activeImage || product.image} alt={product.name} style={styles.mainImage} />
+            {hasDiscount && (
+              <span style={styles.discountBadge}>
+                {discountPercent}% OFF
+              </span>
+            )}
           </div>
-          <div style={styles.swatchDetails}>
-            <div style={styles.specCard}>
-              <span style={styles.specLabel}>Width</span>
-              <span style={styles.specValue}>44 inches (112 cm)</span>
-            </div>
-            <div style={styles.specCard}>
-              <span style={styles.specLabel}>Material</span>
-              <span style={styles.specValue}>{product.category} blend</span>
-            </div>
-            <div style={styles.specCard}>
-              <span style={styles.specLabel}>Care</span>
-              <span style={styles.specValue}>Dry clean / Handwash</span>
-            </div>
+          
+          {/* Thumbnails */}
+          <div style={styles.thumbnailsRow}>
+            {galleryImages.map((img, idx) => (
+              <div 
+                key={idx} 
+                onClick={() => setActiveImage(img)}
+                style={{
+                  ...styles.thumbnail,
+                  borderColor: (activeImage === img || (!activeImage && idx === 0)) ? 'var(--color-primary)' : '#eaeaec'
+                }}
+              >
+                <img src={img} alt="Specimen Thumbnail" style={styles.thumbnailImg} />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Product Information */}
+        {/* 3. PRODUCT SPECIFICATIONS COLUMN */}
         <div style={styles.infoColumn}>
           <span style={styles.categoryBadge}>{product.category}</span>
           <h1 style={styles.productTitle}>{product.name}</h1>
           
           <div style={styles.ratingRow}>
-            <span style={styles.stars}>★★★★★</span>
-            <span style={styles.ratingText}>{product.rating} / 5.0 (Google verified review)</span>
+            <span style={styles.ratingBadge}>★ {product.rating}</span>
+            <span style={styles.ratingText}>Verified Customer Rating</span>
           </div>
 
-          <div style={styles.priceContainer}>
-            {product.originalPrice ? (
-              <span style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <span style={{ textDecoration: 'line-through', color: 'var(--color-text-muted)', fontSize: '14px', fontWeight: '400' }}>
-                  Original: ₹{product.originalPrice}
-                </span>
-                <span style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                  <span style={{ ...styles.price, color: 'var(--color-accent)' }}>₹{product.price}</span>
-                  <span style={styles.priceUnit}>{product.category === 'Ready-to-Wear' ? 'per piece' : 'per meter'}</span>
-                  <span style={{ color: 'var(--color-success)', fontWeight: '700', fontSize: '12px', backgroundColor: 'rgba(30, 126, 52, 0.08)', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase', marginLeft: '12px' }}>
-                    Save {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
-                  </span>
-                </span>
-              </span>
-            ) : (
-              <>
-                <span style={styles.price}>₹{product.price}</span>
-                <span style={styles.priceUnit}>{product.category === 'Ready-to-Wear' ? 'per piece' : 'per meter'}</span>
-              </>
-            )}
-          </div>
-
-          {/* Description */}
-          <div style={styles.descriptionSection}>
-            <h3 style={styles.sectionHeading}>Product Description</h3>
-            <p style={styles.descriptionText}>{product.description}</p>
-          </div>
-
-          {/* Stock and Purchase Section */}
-          <div style={styles.purchaseSection}>
-            <div style={styles.stockStatus}>
-              {product.stock > 0 ? (
-                <div style={styles.stockDetails}>
-                  <span style={styles.inStockDot}></span>
-                  <span style={styles.stockText}>
-                    In Stock: <strong>{product.stock} {product.category === 'Ready-to-Wear' ? 'pieces' : 'meters'}</strong> available
-                  </span>
-                  {product.stock <= 5 && (
-                    <span style={styles.stockAlert}>Running extremely low!</span>
-                  )}
-                </div>
-              ) : (
-                <div style={styles.stockDetails}>
-                  <span style={styles.outOfStockDot}></span>
-                  <span style={styles.outOfStockText}>Currently Out of Stock</span>
-                </div>
+          <div style={styles.priceSection}>
+            <div style={styles.priceFlex}>
+              <span style={styles.priceCurrent}>₹{product.price}</span>
+              {hasDiscount && (
+                <>
+                  <span style={styles.priceOriginal}>₹{product.originalPrice}</span>
+                  <span style={styles.priceDiscount}>({discountPercent}% OFF)</span>
+                </>
               )}
             </div>
+            <span style={styles.priceUnit}>
+              {product.category === 'Ready-to-Wear' ? 'per piece' : 'per meter'}
+            </span>
+          </div>
 
-            {product.stock > 0 && (
-              <>
-                <div style={styles.quantityRow}>
-                  <span style={styles.quantityLabel}>Select Quantity ({product.category === 'Ready-to-Wear' ? 'pcs' : 'meters'}):</span>
-                  <div style={styles.quantitySelector}>
-                    <button onClick={handleDecrement} style={styles.qtyBtn}>-</button>
-                    <span style={styles.qtyValue}>{quantity}</span>
-                    <button onClick={handleIncrement} style={styles.qtyBtn}>+</button>
-                  </div>
-                </div>
+          {/* Color options */}
+          <div style={styles.detailGroup}>
+            <span style={styles.groupLabel}>Available Colors:</span>
+            <div style={styles.colorsRow}>
+              {mockColors.map((col, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedColor(idx)}
+                  style={{
+                    ...styles.colorCircle,
+                    background: col.color,
+                    borderColor: selectedColor === idx ? 'var(--color-primary)' : 'transparent',
+                    transform: selectedColor === idx ? 'scale(1.15)' : 'scale(1)'
+                  }}
+                  title={col.name}
+                />
+              ))}
+            </div>
+          </div>
 
-                <div style={styles.actionButtons}>
-                  <button onClick={handleAddToCart} className="btn btn-primary" style={styles.cartBtn}>
-                    Add To Cart
-                  </button>
-                  <button onClick={handleBuyNow} className="btn btn-gold" style={styles.buyBtn}>
-                    Buy It Now
-                  </button>
-                </div>
+          {/* Care & details */}
+          <div style={styles.specificationsBox}>
+            <h3 style={styles.specTitle}>Fabric Details</h3>
+            <table style={styles.specTable}>
+              <tbody>
+                <tr>
+                  <td style={styles.specKey}>Material Type</td>
+                  <td style={styles.specVal}>{product.category} weave blend</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Care Instructions</td>
+                  <td style={styles.specVal}>Dry clean recommended or hand wash cold. Do not bleach.</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Estimated Delivery</td>
+                  <td style={styles.specVal}>Delivered in 3 - 5 business days. Eligible for COD.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-                {successMsg && (
-                  <div style={styles.toast}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <polyline points="20 6 9 17 4 12" />
-                    </svg>
-                    <span>Added {quantity} {product.category === 'Ready-to-Wear' ? 'pc(s)' : 'meter(s)'} to your shopping cart!</span>
-                  </div>
+          {/* Stock availability details */}
+          <div style={styles.stockDetails}>
+            {product.stock > 0 ? (
+              <div style={styles.stockStatus}>
+                <span style={styles.inStockDot}></span>
+                <span style={styles.stockText}>
+                  In Stock: <strong>{product.stock} {product.category === 'Ready-to-Wear' ? 'pieces' : 'meters'}</strong> remaining.
+                </span>
+                {product.stock <= 5 && (
+                  <span style={styles.lowStockWarning}>Running Low!</span>
                 )}
-              </>
+              </div>
+            ) : (
+              <div style={styles.stockStatus}>
+                <span style={styles.outOfStockDot}></span>
+                <span style={styles.outOfStockText}>Out of Stock</span>
+              </div>
             )}
           </div>
 
-          {/* Sourcing Notes */}
-          <div style={styles.sourcingBox}>
-            <strong>Quality Assured:</strong> Sourced directly from local weavers. Colors may vary slightly due to screen resolutions and artisanal handloom hand dyeing processes.
-          </div>
+          {/* Desk Purchase Controls */}
+          {product.stock > 0 ? (
+            <div style={styles.purchaseControls} className="desktop-only">
+              <div style={styles.quantityFlex}>
+                <span style={styles.groupLabel}>Quantity:</span>
+                <div style={styles.qtyBox}>
+                  <button onClick={handleDecrement} style={styles.qtyBtn}>-</button>
+                  <span style={styles.qtyVal}>{quantity}</span>
+                  <button onClick={handleIncrement} style={styles.qtyBtn}>+</button>
+                </div>
+              </div>
+              <div style={styles.actionButtonsRow}>
+                <button onClick={handleAddToCart} style={styles.cartBtn}>
+                  Add to Cart
+                </button>
+                <button onClick={handleBuyNow} style={styles.buyBtn}>
+                  Buy Now
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div style={styles.outOfStockBox} className="desktop-only">
+              Currently Unavailable
+            </div>
+          )}
+
+          {/* Wishlist toggle */}
+          <button 
+            onClick={() => toggleWishlist(product.id)}
+            style={{
+              ...styles.wishlistToggleBtn,
+              color: wishlist.includes(product.id) ? 'var(--color-primary)' : '#282c3f',
+              borderColor: wishlist.includes(product.id) ? 'var(--color-primary)' : '#e5e7eb'
+            }}
+          >
+            <svg 
+              width="16" 
+              height="16" 
+              viewBox="0 0 24 24" 
+              fill={wishlist.includes(product.id) ? 'var(--color-primary)' : 'none'} 
+              stroke="currentColor" 
+              strokeWidth="2" 
+              style={{ marginRight: '8px' }}
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <span>{wishlist.includes(product.id) ? 'WISHLISTED' : 'ADD TO WISHLIST'}</span>
+          </button>
+
+          {/* Success messages */}
+          {successMsg && (
+            <div style={styles.toast}>
+              <span>Item added successfully to your shopping cart!</span>
+            </div>
+          )}
+
         </div>
       </div>
+
+      {/* 4. RECENTLY VIEWED PRODUCTS CAROUSEL */}
+      {recentlyViewedItems.length > 0 && (
+        <div style={styles.recentlyViewedSection}>
+          <h2 style={styles.recentTitle}>Recently Viewed Fabrics</h2>
+          <div className="mobile-two-column" style={styles.recentGrid}>
+            {recentlyViewedItems.map((item) => (
+              <div 
+                key={item.id} 
+                onClick={() => handleRecommendClick(item.id)}
+                style={styles.recentCard}
+              >
+                <div style={styles.recentImgContainer}>
+                  <img src={item.image} alt={item.name} style={styles.recentImg} />
+                </div>
+                <div style={styles.recentInfo}>
+                  <span style={styles.recentCat}>{item.category.toUpperCase()}</span>
+                  <span style={styles.recentName}>{item.name}</span>
+                  <span style={styles.recentPrice}>₹{item.price}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 5. STICKY BOTTOM ACTION BAR (MOBILE ONLY) */}
+      {product.stock > 0 && (
+        <div className="sticky-details-bar" style={styles.stickyMobileBar}>
+          <button onClick={handleAddToCart} style={styles.stickyCartBtn}>
+            Add to Cart
+          </button>
+          <button onClick={handleBuyNow} style={styles.stickyBuyBtn}>
+            Buy Now
+          </button>
+        </div>
+      )}
+
     </div>
   );
 };
@@ -182,268 +329,433 @@ const styles = {
     paddingBottom: '80px'
   },
   backBtn: {
-    color: 'var(--color-primary-light)',
-    fontSize: '13px',
-    fontWeight: '600',
-    marginBottom: '28px',
+    fontSize: '12px',
+    fontWeight: '700',
+    color: '#7e818c',
+    marginBottom: '20px',
     background: 'none',
     border: 'none',
     cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    transition: 'var(--transition-fast)'
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
   },
   layout: {
     display: 'grid',
-    gridTemplateColumns: '1.1fr 0.9fr',
-    gap: '48px'
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '32px',
+    alignItems: 'flex-start'
   },
-  swatchColumn: {
+  galleryColumn: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px'
-  },
-  swatchBig: {
-    height: '380px',
-    borderRadius: '16px',
-    boxShadow: 'var(--shadow-md)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid var(--color-border-light)',
-    position: 'relative'
-  },
-  swatchLabel: {
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: '700',
-    letterSpacing: '1px',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: '6px 16px',
-    borderRadius: '20px'
-  },
-  swatchDetails: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
     gap: '16px'
   },
-  specCard: {
-    backgroundColor: 'var(--color-bg-white)',
-    border: '1px solid var(--color-border-light)',
-    borderRadius: '8px',
-    padding: '12px',
-    textAlign: 'center',
-    boxShadow: 'var(--shadow-sm)'
+  mainImageWrapper: {
+    position: 'relative',
+    width: '100%',
+    aspectRatio: '3 / 4',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    backgroundColor: '#f5f5f6',
+    border: '1px solid #eaeaec'
   },
-  specLabel: {
-    display: 'block',
+  mainImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover'
+  },
+  discountBadge: {
+    position: 'absolute',
+    top: '12px',
+    left: '12px',
+    backgroundColor: 'var(--color-primary)',
+    color: '#ffffff',
     fontSize: '10px',
     fontWeight: '700',
-    color: 'var(--color-text-muted)',
-    textTransform: 'uppercase',
-    marginBottom: '4px'
+    padding: '4px 10px',
+    borderRadius: '4px'
   },
-  specValue: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: 'var(--color-primary-dark)'
+  thumbnailsRow: {
+    display: 'flex',
+    gap: '12px',
+    overflowX: 'auto'
+  },
+  thumbnail: {
+    width: '64px',
+    height: '84px',
+    borderRadius: '6px',
+    overflow: 'hidden',
+    border: '2px solid transparent',
+    cursor: 'pointer',
+    flexShrink: 0,
+    backgroundColor: '#f5f5f6'
+  },
+  thumbnailImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover'
   },
   infoColumn: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    gap: '20px',
+    textAlign: 'left'
   },
   categoryBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(197, 160, 89, 0.15)',
-    color: 'var(--color-secondary-dark)',
-    fontSize: '11px',
-    fontWeight: '700',
-    padding: '4px 12px',
+    backgroundColor: 'rgba(125,29,43,0.08)',
+    color: 'var(--color-primary)',
+    fontSize: '10px',
+    fontWeight: '800',
+    padding: '3px 8px',
     borderRadius: '4px',
     textTransform: 'uppercase',
-    marginBottom: '12px'
+    letterSpacing: '0.5px'
   },
   productTitle: {
-    fontSize: '32px',
-    lineHeight: '1.2',
-    color: 'var(--color-primary-dark)',
-    marginBottom: '12px'
+    fontSize: '20px',
+    lineHeight: '1.3',
+    color: '#282c3f',
+    fontWeight: '700',
+    fontFamily: 'var(--font-sans)',
+    margin: 0
   },
   ratingRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    marginBottom: '20px'
+    gap: '8px'
   },
-  stars: {
-    color: 'var(--color-secondary)',
-    fontSize: '16px'
+  ratingBadge: {
+    backgroundColor: '#14c4a6',
+    color: '#ffffff',
+    fontSize: '11px',
+    fontWeight: '700',
+    padding: '2px 6px',
+    borderRadius: '4px'
   },
   ratingText: {
     fontSize: '12px',
-    color: 'var(--color-text-muted)'
+    color: '#7e818c'
   },
-  priceContainer: {
+  priceSection: {
+    borderBottom: '1px solid #eaeaec',
+    paddingBottom: '16px'
+  },
+  priceFlex: {
     display: 'flex',
     alignItems: 'baseline',
-    gap: '8px',
-    borderBottom: '1px solid var(--color-border)',
-    paddingBottom: '20px',
-    marginBottom: '24px'
+    gap: '8px'
   },
-  price: {
-    fontSize: '28px',
-    fontWeight: '700',
+  priceCurrent: {
+    fontSize: '24px',
+    fontWeight: '800',
     color: 'var(--color-primary)'
   },
+  priceOriginal: {
+    fontSize: '14px',
+    textDecoration: 'line-through',
+    color: '#7e818c'
+  },
+  priceDiscount: {
+    fontSize: '13px',
+    color: '#ff9f00',
+    fontWeight: '700'
+  },
   priceUnit: {
-    fontSize: '14px',
-    color: 'var(--color-text-muted)'
+    fontSize: '11px',
+    color: '#7e818c',
+    marginTop: '2px',
+    display: 'block'
   },
-  descriptionSection: {
-    marginBottom: '28px'
+  detailGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
   },
-  sectionHeading: {
-    fontSize: '14px',
+  groupLabel: {
+    fontSize: '12px',
     fontWeight: '700',
-    color: 'var(--color-primary-dark)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.5px',
-    marginBottom: '8px'
+    color: '#282c3f'
   },
-  descriptionText: {
-    fontSize: '14px',
-    color: 'var(--color-text-dark)',
-    lineHeight: '1.6'
+  colorsRow: {
+    display: 'flex',
+    gap: '12px'
   },
-  purchaseSection: {
-    backgroundColor: 'var(--color-bg-white)',
-    border: '1px solid var(--color-border-light)',
+  colorCircle: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    cursor: 'pointer',
+    border: '2px solid transparent',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    transition: 'all 0.2s ease',
+    padding: 0
+  },
+  specificationsBox: {
+    backgroundColor: '#ffffff',
+    border: '1px solid #eaeaec',
     borderRadius: '12px',
-    padding: '24px',
-    boxShadow: 'var(--shadow-sm)',
-    marginBottom: '28px'
+    padding: '16px'
   },
-  stockStatus: {
-    marginBottom: '20px'
+  specTitle: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#282c3f',
+    marginBottom: '12px',
+    textTransform: 'uppercase',
+    fontFamily: 'var(--font-sans)'
+  },
+  specTable: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: '12px'
+  },
+  specKey: {
+    color: '#7e818c',
+    padding: '6px 0',
+    width: '35%',
+    fontWeight: '500'
+  },
+  specVal: {
+    color: '#282c3f',
+    padding: '6px 0',
+    fontWeight: '600'
   },
   stockDetails: {
+    padding: '4px 0'
+  },
+  stockStatus: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    flexWrap: 'wrap'
+    gap: '8px'
   },
   inStockDot: {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    backgroundColor: 'var(--color-success)'
+    backgroundColor: '#10B981'
   },
   outOfStockDot: {
     width: '8px',
     height: '8px',
     borderRadius: '50%',
-    backgroundColor: 'var(--color-danger)'
+    backgroundColor: '#EF4444'
   },
   stockText: {
-    fontSize: '13px',
-    color: 'var(--color-text-dark)'
-  },
-  stockAlert: {
-    backgroundColor: 'rgba(189, 33, 48, 0.1)',
-    color: 'var(--color-danger)',
-    fontSize: '10px',
-    fontWeight: '700',
-    padding: '2px 8px',
-    borderRadius: '4px',
-    marginLeft: '8px',
-    textTransform: 'uppercase'
+    fontSize: '12px',
+    color: '#535766'
   },
   outOfStockText: {
-    fontSize: '13px',
-    color: 'var(--color-danger)',
-    fontWeight: '600'
+    fontSize: '12.5px',
+    fontWeight: '700',
+    color: '#ef4444'
   },
-  quantityRow: {
+  lowStockWarning: {
+    color: '#ff9f00',
+    fontWeight: '700',
+    fontSize: '11px',
+    backgroundColor: '#fffbeb',
+    padding: '2px 8px',
+    borderRadius: '4px'
+  },
+  purchaseControls: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    borderTop: '1px solid #eaeaec',
+    paddingTop: '16px'
+  },
+  quantityFlex: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '24px'
+    gap: '16px'
   },
-  quantityLabel: {
-    fontSize: '13px',
-    fontWeight: '600',
-    color: 'var(--color-text-dark)'
-  },
-  quantitySelector: {
+  qtyBox: {
     display: 'flex',
     alignItems: 'center',
-    border: '1px solid var(--color-border)',
-    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+    borderRadius: '4px',
     overflow: 'hidden'
   },
   qtyBtn: {
-    width: '36px',
-    height: '36px',
+    width: '32px',
+    height: '32px',
+    backgroundColor: '#f8fafc',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '700',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'var(--color-border-light)',
-    fontSize: '18px',
-    fontWeight: '600',
-    color: 'var(--color-primary-dark)',
-    transition: 'var(--transition-fast)'
+    color: '#282c3f'
   },
-  qtyValue: {
-    width: '44px',
-    textAlign: 'center',
-    fontSize: '14px',
-    fontWeight: '600'
+  qtyVal: {
+    padding: '0 16px',
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#282c3f'
   },
-  actionButtons: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '16px'
+  actionButtonsRow: {
+    display: 'flex',
+    gap: '12px'
   },
   cartBtn: {
-    borderRadius: '8px',
-    padding: '14px 20px',
-    fontSize: '13px'
+    flexGrow: 1,
+    backgroundColor: '#ffffff',
+    color: 'var(--color-primary)',
+    border: '2px solid var(--color-primary)',
+    padding: '12px 0',
+    borderRadius: '6px',
+    fontWeight: '700',
+    fontSize: '13px',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase',
+    textAlign: 'center'
   },
   buyBtn: {
-    borderRadius: '8px',
-    padding: '14px 20px',
-    fontSize: '13px'
+    flexGrow: 1,
+    backgroundColor: 'var(--color-primary)',
+    color: '#ffffff',
+    border: 'none',
+    padding: '12px 0',
+    borderRadius: '6px',
+    fontWeight: '700',
+    fontSize: '13px',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase',
+    textAlign: 'center'
   },
-  toast: {
+  outOfStockBox: {
+    textAlign: 'center',
+    padding: '12px 0',
+    backgroundColor: '#f3f4f6',
+    color: '#9496a2',
+    fontWeight: '700',
+    fontSize: '13px',
+    borderRadius: '6px'
+  },
+  wishlistToggleBtn: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    backgroundColor: 'rgba(30, 126, 52, 0.08)',
-    color: 'var(--color-success)',
-    border: '1px solid rgba(30, 126, 52, 0.2)',
-    padding: '12px 16px',
-    borderRadius: '8px',
-    fontSize: '13px',
-    fontWeight: '500',
-    marginTop: '16px'
-  },
-  sourcingBox: {
-    borderLeft: '3px solid var(--color-secondary)',
-    backgroundColor: 'var(--color-border-light)',
-    padding: '16px',
-    borderRadius: '0 8px 8px 0',
+    justifyContent: 'center',
+    width: '100%',
+    padding: '12px 0',
+    borderRadius: '6px',
+    border: '1px solid #e5e7eb',
+    backgroundColor: '#ffffff',
+    fontWeight: '700',
     fontSize: '12px',
-    color: 'var(--color-text-muted)',
-    lineHeight: '1.5'
-  }
-};
-
-// Adaptive screen width handling
-if (window.innerWidth <= 768) {
-  styles.layout = {
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
+    transition: 'all 0.2s ease',
+    marginTop: '8px'
+  },
+  toast: {
+    backgroundColor: '#1f2937',
+    color: '#ffffff',
+    padding: '10px 16px',
+    borderRadius: '6px',
+    fontSize: '12px',
+    textAlign: 'center',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    animation: 'fadeIn 0.2s ease'
+  },
+  recentlyViewedSection: {
+    marginTop: '40px',
+    borderTop: '1px solid #eaeaec',
+    paddingTop: '24px'
+  },
+  recentTitle: {
+    fontSize: '15px',
+    fontWeight: '800',
+    color: '#282c3f',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px',
+    marginBottom: '20px',
+    textAlign: 'left'
+  },
+  recentGrid: {
+    marginTop: '12px'
+  },
+  recentCard: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '32px'
-  };
-}
+    backgroundColor: '#ffffff',
+    border: '1px solid #eaeaec',
+    borderRadius: '8px',
+    overflow: 'hidden',
+    cursor: 'pointer'
+  },
+  recentImgContainer: {
+    width: '100%',
+    aspectRatio: '3 / 4',
+    overflow: 'hidden',
+    backgroundColor: '#f5f5f6'
+  },
+  recentImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover'
+  },
+  recentInfo: {
+    padding: '8px',
+    textAlign: 'left'
+  },
+  recentCat: {
+    fontSize: '8.5px',
+    fontWeight: '700',
+    color: '#7e818c',
+    display: 'block'
+  },
+  recentName: {
+    fontSize: '11px',
+    color: '#282c3f',
+    fontWeight: '600',
+    display: 'block',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    marginTop: '2px'
+  },
+  recentPrice: {
+    fontSize: '11.5px',
+    fontWeight: '700',
+    color: 'var(--color-primary)',
+    display: 'block',
+    marginTop: '4px'
+  },
+  stickyMobileBar: {
+    // Media query handles showing it on mobile, styles defined in index.css
+  },
+  stickyCartBtn: {
+    width: '50%',
+    backgroundColor: '#ffffff',
+    color: 'var(--color-primary)',
+    border: '1.5px solid var(--color-primary)',
+    padding: '12px 0',
+    borderRadius: '4px',
+    fontWeight: '700',
+    fontSize: '12.5px',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase',
+    textAlign: 'center'
+  },
+  stickyBuyBtn: {
+    width: '50%',
+    backgroundColor: 'var(--color-primary)',
+    color: '#ffffff',
+    border: 'none',
+    padding: '12px 0',
+    borderRadius: '4px',
+    fontWeight: '700',
+    fontSize: '12.5px',
+    cursor: 'pointer',
+    fontFamily: 'var(--font-sans)',
+    textTransform: 'uppercase',
+    textAlign: 'center'
+  }
+};

@@ -13,8 +13,10 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
     city: '',
     pincode: ''
   });
+
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [error, setError] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -22,6 +24,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
       [name]: value
     }));
   };
+
   const handleCheckboxChange = (e) => {
     if (e.target.checked) {
       setFormData(prev => ({
@@ -30,22 +33,27 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
       }));
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
+
     // Validation
     const { name, email, phone, whatsapp, address, city, pincode } = formData;
     if (!name || !email || !phone || !whatsapp || !address || !city || !pincode) {
       setError('Please fill in all the required delivery details.');
       return;
     }
+
     if (cart.length === 0) {
       setError('Your shopping cart is empty.');
       return;
     }
+
     // Place Order
     const newOrder = placeOrder(formData, paymentMethod);
     setSelectedOrderId(newOrder.id);
+
     if (paymentMethod === 'UPI') {
       setRoute('payment');
     } else {
@@ -53,6 +61,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
       setRoute('orders');
     }
   };
+
   if (cart.length === 0) {
     return (
       <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>

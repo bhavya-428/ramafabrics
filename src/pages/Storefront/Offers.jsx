@@ -11,7 +11,7 @@ export const Offers = ({ setRoute }) => {
     setTimeout(() => setCopiedCoupon(null), 2000);
   };
 
-  const discountedProducts = products.filter(p => p.originalPrice && p.price < p.originalPrice);
+  const discountedProducts = products.filter(p => p.isOfferItem || (p.originalPrice && p.price < p.originalPrice));
 
   return (
     <div className="container animate-fade-in" style={styles.offersContainer}>

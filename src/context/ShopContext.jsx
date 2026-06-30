@@ -217,7 +217,7 @@ export const ShopProvider = ({ children }) => {
     const saved = localStorage.getItem('rf_current_user');
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (parsed.email === 'v.bhavyasri2001@gmail.com' && parsed.name === 'Store Owner') {
+      if (parsed && parsed.email === 'v.bhavyasri2001@gmail.com' && parsed.name === 'Store Owner') {
         parsed.name = 'v.bhavyasri2001';
         localStorage.setItem('rf_current_user', JSON.stringify(parsed));
       }
@@ -229,6 +229,11 @@ export const ShopProvider = ({ children }) => {
   const [cart, setCart] = useState(() => {
     const saved = localStorage.getItem('rf_cart');
     return saved ? JSON.parse(saved) : []; // Array of { product, quantity }
+  });
+
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem('rf_wishlist');
+    return saved ? JSON.parse(saved) : []; // Array of product IDs
   });
 
   const [activeCoupon, setActiveCoupon] = useState(null);
@@ -261,6 +266,10 @@ export const ShopProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('rf_cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
 
   // --- CART OPERATIONS ---
   const addToCart = (product, qty = 1) => {
@@ -299,6 +308,17 @@ export const ShopProvider = ({ children }) => {
   const clearCart = () => {
     setCart([]);
     setActiveCoupon(null);
+  };
+
+  // --- WISHLIST OPERATIONS ---
+  const toggleWishlist = (productId) => {
+    setWishlist(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId);
+      } else {
+        return [...prev, productId];
+      }
+    });
   };
 
   // Calculate totals
@@ -502,11 +522,13 @@ _I have completed the payment via UPI. Please confirm my order!_`;
         settings,
         currentUser,
         cart,
+        wishlist,
         activeCoupon,
         addToCart,
         updateCartQty,
         removeFromCart,
         clearCart,
+        toggleWishlist,
         getCartSubtotal,
         getCartDiscount,
         getCartTotal,

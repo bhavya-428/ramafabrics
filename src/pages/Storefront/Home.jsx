@@ -1,18 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
-  const { products, offers, settings, addToCart } = useContext(ShopContext);
-  const [copiedCoupon, setCopiedCoupon] = useState(null);
+  const { products, addToCart } = useContext(ShopContext);
 
   const featuredProducts = products.filter(p => p.isFeatured || p.rating >= 4.7).slice(0, 4);
-  const discountedProducts = products.filter(p => p.originalPrice && p.price < p.originalPrice).slice(0, 4);
-
-  const handleCopyCoupon = (code) => {
-    navigator.clipboard.writeText(code);
-    setCopiedCoupon(code);
-    setTimeout(() => setCopiedCoupon(null), 2000);
-  };
 
   const handleCategoryClick = (category) => {
     setCategoryFilter(category);
@@ -24,238 +16,161 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
     setRoute('product-detail');
   };
 
+  const categories = [
+    { name: 'Cotton', img: 'https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Silk', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Linen', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Rayon', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Muslin', img: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Organza', img: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Chiffon', img: 'https://images.unsplash.com/photo-1543087903-1ac2ec7aa8c5?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Velvet', img: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Embroidery', img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Printed Fabrics', img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=200&q=80' },
+    { name: 'Dress Materials', img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=200&q=80' }
+  ];
+
+  const getBadgeStyle = (index) => {
+    if (index === 0) return { text: '20% OFF', bg: '#ef4444' }; // Red
+    if (index === 1) return { text: 'NEW', bg: '#10b981' }; // Green
+    if (index === 2) return { text: '15% OFF', bg: '#ef4444' };
+    if (index === 3) return { text: 'BESTSELLER', bg: '#10b981' };
+    return { text: '10% OFF', bg: '#ef4444' };
+  };
+
   return (
     <div style={styles.container} className="animate-fade-in">
       {/* 1. HERO SECTION */}
-      <section style={styles.hero} className="fabric-pattern-bg">
-        <div style={styles.heroOverlay}>
-          <div className="container" style={styles.heroContent}>
-            <span style={styles.heroTag}>SINCE 2022</span>
-            <h1 style={styles.heroTitle}>{settings.heroTitle}</h1>
-            <p style={styles.heroSubtitle}>{settings.heroSubtitle}</p>
-            <div style={styles.heroButtons}>
+      <section style={styles.heroSection}>
+        <div className="container" style={{ position: 'relative' }}>
+          <div style={styles.heroBanner}>
+            {/* Left Nav Arrow */}
+            <div style={styles.heroNavLeft}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </div>
+            
+            <div style={styles.heroContent}>
+              <span style={styles.heroTag}>PREMIUM COLLECTION</span>
+              <h1 style={styles.heroTitle}>WEDDING FABRICS</h1>
+              <p style={styles.heroSubtitle}>Exclusive fabrics for your special moments</p>
               <button 
                 onClick={() => { setCategoryFilter('All'); setRoute('shop'); }} 
-                className="btn btn-gold"
+                style={styles.heroBtn}
               >
-                Shop Collection
+                SHOP NOW
               </button>
-              <button 
-                onClick={() => setRoute('offers')} 
-                className="btn btn-secondary" 
-                style={{ color: 'white', borderColor: 'white' }}
-              >
-                View Offers
-              </button>
+            </div>
+
+            {/* Right Nav Arrow */}
+            <div style={styles.heroNavRight}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </div>
+
+            {/* Dots */}
+            <div style={styles.heroDots}>
+              <div style={{...styles.dot, backgroundColor: '#C5A059'}}></div>
+              <div style={styles.dot}></div>
+              <div style={styles.dot}></div>
+              <div style={styles.dot}></div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. OFFERS & DISCOUNTS BOARD */}
+      {/* 2. SHOP BY CATEGORY */}
       <section className="container" style={styles.section}>
         <div style={styles.sectionHeader}>
-          <span style={styles.sectionSub}>FABRICS AT LOW COST</span>
-          <h2 style={styles.sectionTitle}>Special Offers & Markdown Deals</h2>
+          <h2 style={styles.sectionTitle}>SHOP BY CATEGORY</h2>
+          <span style={styles.viewAllLink} onClick={() => { setCategoryFilter('All'); setRoute('shop'); }}>View All →</span>
         </div>
-        <div className="grid grid-4 gap-3">
-          {discountedProducts.map((product) => {
-            const savings = product.originalPrice - product.price;
-            const savingsPercent = Math.round((savings / product.originalPrice) * 100);
+        
+        <div style={styles.categoriesWrapper}>
+          {categories.map((cat, idx) => (
+            <div key={idx} style={styles.categoryCircleCard} onClick={() => handleCategoryClick(cat.name)}>
+              <div style={{ ...styles.categoryCircleImg, backgroundImage: `url(${cat.img})` }}></div>
+              <span style={styles.categoryCircleName}>{cat.name}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 3. FEATURED PRODUCTS */}
+      <section className="container" style={styles.section}>
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>FEATURED PRODUCTS</h2>
+          <div style={styles.carouselControls}>
+            <div style={styles.controlCircle}>&lt;</div>
+            <div style={styles.controlCircle}>&gt;</div>
+          </div>
+        </div>
+        
+        <div className="grid grid-4 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
+          {featuredProducts.concat(featuredProducts[0] || []).slice(0, 5).map((product, idx) => {
+            const badge = getBadgeStyle(idx);
             return (
-              <div key={product.id} className="luxury-card" style={styles.productCard}>
-                <div 
-                  style={{ ...styles.productSwatch, backgroundImage: `url(${product.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                  onClick={() => handleViewProduct(product.id)}
-                >
-                  <span style={styles.swatchText}>Fabric Preview</span>
-                  <span style={{ ...styles.lowStockBadge, backgroundColor: 'var(--color-accent)' }}>
-                    {savingsPercent}% OFF
-                  </span>
+              <div key={idx} style={styles.productCard}>
+                <div style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }} onClick={() => handleViewProduct(product.id)}>
+                  <span style={{ ...styles.productBadge, backgroundColor: badge.bg }}>{badge.text}</span>
+                  <div style={styles.wishlistBtn}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  </div>
                 </div>
                 <div style={styles.productInfo}>
+                  <h3 style={styles.productName}>{product.name}</h3>
                   <span style={styles.productCat}>{product.category}</span>
-                  <h3 style={styles.productName} onClick={() => handleViewProduct(product.id)}>
-                    {product.name}
-                  </h3>
-                  <div style={styles.ratingRow}>
-                    <span style={styles.ratingStars}>★</span> {product.rating}
-                  </div>
                   <div style={styles.priceRow}>
-                    <span style={{ ...styles.productPrice, color: 'var(--color-accent)' }}>
-                      ₹{product.price}
-                      <span style={{ textDecoration: 'line-through', color: 'var(--color-text-muted)', fontSize: '11px', marginLeft: '6px', fontWeight: '400' }}>
-                        ₹{product.originalPrice}
-                      </span>
-                      <span style={styles.priceUnit}>
-                        {product.category === 'Ready-to-Wear' ? '/pc' : '/m'}
-                      </span>
-                    </span>
-                    {product.stock > 0 ? (
-                      <button 
-                        onClick={() => addToCart(product, 1)}
-                        className="btn btn-primary btn-sm"
-                        style={styles.addBtn}
-                      >
-                        + Add
-                      </button>
-                    ) : (
-                      <span style={styles.outOfStock}>Sold Out</span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={styles.productPrice}>₹{product.price}</span>
+                      {product.originalPrice && (
+                        <span style={styles.originalPrice}>₹{product.originalPrice}</span>
+                      )}
+                    </div>
+                    <div style={styles.ratingRow}>
+                      <span style={styles.stars}>★★★★★</span>
+                      <span style={styles.reviewCount}>({Math.floor(Math.random() * 100) + 20})</span>
+                    </div>
                   </div>
                 </div>
+                <button style={styles.addToCartBtn} onClick={() => addToCart(product, 1)}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                  Add to Cart
+                </button>
               </div>
             );
           })}
         </div>
-        
-        {/* Additional Coupons list at the bottom of the section */}
-        <div style={{ marginTop: '40px', borderTop: '1px dashed var(--color-border)', paddingTop: '32px' }}>
-          <h4 style={{ ...styles.sectionSub, textAlign: 'center', marginBottom: '16px' }}>Extra Savings Coupon Codes</h4>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            {offers.map((offer) => (
-              <div 
-                key={offer.id} 
-                onClick={() => handleCopyCoupon(offer.code)}
-                style={{ 
-                  backgroundColor: 'var(--color-bg-white)', 
-                  border: '1px dashed var(--color-secondary)', 
-                  borderRadius: '8px', 
-                  padding: '12px 24px', 
-                  cursor: 'pointer', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '12px',
-                  boxShadow: 'var(--shadow-sm)'
-                }}
-                title="Click to copy coupon code"
-              >
-                <code style={{ fontSize: '14px', fontWeight: '700', color: 'var(--color-primary)' }}>{offer.code}</code>
-                <span style={{ fontSize: '11px', color: 'var(--color-text-muted)' }}>
-                  {copiedCoupon === offer.code ? 'Copied!' : `(Click to Copy: ${offer.type === 'percentage' ? `${offer.discount}%` : `₹${offer.discount}`} Off)`}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
       </section>
 
-      {/* 3. CATEGORIES NAVIGATOR */}
-      <section style={styles.categoriesSection}>
-        <div className="container">
-          <div style={styles.sectionHeaderCentered}>
-            <span style={styles.sectionSub}>DISCOVER BY FABRIC</span>
-            <h2 style={styles.sectionTitle}>Shop by Fabric Type</h2>
-          </div>
-          <div style={styles.categoriesGrid}>
-            {[
-              { name: 'Silk', desc: 'Luxury Banarasi, Batik & Brocades', color: '#7D1D2B' },
-              { name: 'Cotton', desc: 'Fine Mangalagiri & Block Prints', color: '#0B4A3A' },
-              { name: 'Handloom', desc: 'Craftsman Organic Weaves', color: '#9B7834' },
-              { name: 'Georgette', desc: 'Flowy Florals & Crepe Prints', color: '#126A54' },
-              { name: 'Ready-to-Wear', desc: 'Designer Kurtas & Suit Sets', color: '#A61C39' }
-            ].map((cat, idx) => (
-              <div 
-                key={idx} 
-                onClick={() => handleCategoryClick(cat.name)}
-                style={{ ...styles.categoryCard, borderTopColor: cat.color }}
-              >
-                <div style={{ ...styles.categoryIconCircle, backgroundColor: cat.color }}>
-                  {cat.name.substring(0, 2)}
-                </div>
-                <h3 style={styles.categoryName}>{cat.name}</h3>
-                <p style={styles.categoryDesc}>{cat.desc}</p>
-                <span style={styles.categoryLink}>Explore →</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4. FEATURED PRODUCTS */}
-      <section className="container" style={styles.section}>
-        <div style={styles.sectionHeader}>
-          <span style={styles.sectionSub}>HANDPICKED SELECTION</span>
-          <h2 style={styles.sectionTitle}>Featured Fabrics & Wear</h2>
-        </div>
-        <div className="grid grid-4 gap-3">
-          {featuredProducts.map((product) => (
-            <div key={product.id} className="luxury-card" style={styles.productCard}>
-              {/* Visual Swatch Mock */}
-              <div 
-                style={{ ...styles.productSwatch, backgroundImage: `url(${product.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                onClick={() => handleViewProduct(product.id)}
-              >
-                <span style={styles.swatchText}>Fabric Texture Preview</span>
-                {product.stock <= 5 && <span style={styles.lowStockBadge}>Low Stock</span>}
-              </div>
-              <div style={styles.productInfo}>
-                <span style={styles.productCat}>{product.category}</span>
-                <h3 style={styles.productName} onClick={() => handleViewProduct(product.id)}>
-                  {product.name}
-                </h3>
-                <div style={styles.ratingRow}>
-                  <span style={styles.ratingStars}>★</span> {product.rating} (Google Verified)
-                </div>
-                <div style={styles.priceRow}>
-                  <span style={styles.productPrice}>₹{product.price} <span style={styles.priceUnit}>{product.category === 'Ready-to-Wear' ? '/piece' : '/meter'}</span></span>
-                  {product.stock > 0 ? (
-                    <button 
-                      onClick={() => addToCart(product, 1)}
-                      className="btn btn-primary btn-sm"
-                      style={styles.addBtn}
-                    >
-                      + Add
-                    </button>
-                  ) : (
-                    <span style={styles.outOfStock}>Sold Out</span>
-                  )}
-                </div>
-              </div>
+      {/* 4. FEATURES FOOTER */}
+      <section style={styles.featuresFooter}>
+        <div className="container" style={styles.featuresGrid}>
+          <div style={styles.featureItem}>
+            <div style={styles.featureIcon}>🚚</div>
+            <div>
+              <h4 style={styles.featureTitle}>FREE SHIPPING</h4>
+              <p style={styles.featureDesc}>On orders above ₹999</p>
             </div>
-          ))}
-        </div>
-        <div style={styles.viewMoreRow}>
-          <button 
-            onClick={() => { setCategoryFilter('All'); setRoute('shop'); }}
-            className="btn btn-secondary"
-          >
-            View All Products
-          </button>
-        </div>
-      </section>
-
-      {/* 5. CUSTOMER TESTIMONIALS */}
-      <section style={styles.testimonialSection}>
-        <div className="container">
-          <div style={styles.sectionHeaderCentered}>
-            <span style={styles.sectionSub}>WHAT PEOPLE SAY</span>
-            <h2 style={{ ...styles.sectionTitle, color: 'white' }}>Reviews from Google</h2>
           </div>
-          <div style={styles.testimonialsGrid}>
-            {[
-              {
-                text: "Staff also customer friendly. Very good range of fabrics at reasonable prices.",
-                author: "Google Reviewer",
-                rating: 5
-              },
-              {
-                text: "Good place good atmosphere. The collection of handlooms is excellent.",
-                author: "Vijayawada Local",
-                rating: 5
-              },
-              {
-                text: "Beautiful store with a premium selection of contemporary prints and borders.",
-                author: "Happy Customer",
-                rating: 4.5
-              }
-            ].map((testi, idx) => (
-              <div key={idx} style={styles.testimonialCard}>
-                <div style={styles.stars}>{'★'.repeat(Math.floor(testi.rating))}</div>
-                <p style={styles.testimonialText}>"{testi.text}"</p>
-                <h4 style={styles.testimonialAuthor}>- {testi.author}</h4>
-              </div>
-            ))}
+          <div style={styles.featureItem}>
+            <div style={styles.featureIcon}>🛡️</div>
+            <div>
+              <h4 style={styles.featureTitle}>PREMIUM QUALITY</h4>
+              <p style={styles.featureDesc}>Finest fabrics assured</p>
+            </div>
+          </div>
+          <div style={styles.featureItem}>
+            <div style={styles.featureIcon}>↩️</div>
+            <div>
+              <h4 style={styles.featureTitle}>EASY RETURNS</h4>
+              <p style={styles.featureDesc}>7 days easy return</p>
+            </div>
+          </div>
+          <div style={styles.featureItem}>
+            <div style={styles.featureIcon}>🎧</div>
+            <div>
+              <h4 style={styles.featureTitle}>CUSTOMER SUPPORT</h4>
+              <p style={styles.featureDesc}>We're here to help</p>
+            </div>
           </div>
         </div>
       </section>
@@ -265,328 +180,287 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
 
 const styles = {
   container: {
-    width: '100%'
-  },
-  hero: {
-    height: '450px',
-    position: 'relative',
-    color: 'var(--color-bg-cream)',
-    overflow: 'hidden'
-  },
-  heroOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
     width: '100%',
-    height: '100%',
-    background: 'linear-gradient(rgba(6, 46, 36, 0.9), rgba(6, 46, 36, 0.7))',
+    backgroundColor: '#FAF9F6', // Very light cream
+  },
+  heroSection: {
+    paddingTop: '24px',
+    paddingBottom: '24px',
+  },
+  heroBanner: {
+    width: '100%',
+    height: '400px',
+    borderRadius: '16px',
+    backgroundImage: 'url(https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1600&q=80)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    position: 'relative',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  heroNavLeft: {
+    position: 'absolute',
+    left: '20px',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  heroNavRight: {
+    position: 'absolute',
+    right: '20px',
+    color: '#fff',
+    cursor: 'pointer',
+  },
+  heroDots: {
+    position: 'absolute',
+    bottom: '20px',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '8px',
+  },
+  dot: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    cursor: 'pointer',
   },
   heroContent: {
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '16px'
+    paddingLeft: '80px',
+    color: '#fff',
+    maxWidth: '500px',
   },
   heroTag: {
-    color: 'var(--color-secondary)',
-    fontSize: '12px',
-    fontWeight: '700',
-    letterSpacing: '4px',
-    textTransform: 'uppercase'
+    fontSize: '14px',
+    fontWeight: '600',
+    letterSpacing: '2px',
+    color: '#C5A059',
+    display: 'block',
+    marginBottom: '12px',
   },
   heroTitle: {
+    fontSize: '48px',
     fontFamily: 'var(--font-serif)',
-    fontSize: '38px',
     fontWeight: '700',
-    color: 'var(--color-bg-cream)',
-    maxWidth: '800px',
-    lineHeight: '1.2'
+    lineHeight: '1.1',
+    color: '#fff',
+    marginBottom: '16px',
   },
   heroSubtitle: {
     fontSize: '16px',
-    color: 'rgba(250, 248, 245, 0.8)',
-    maxWidth: '600px',
-    fontWeight: '300'
+    fontWeight: '400',
+    marginBottom: '32px',
+    opacity: 0.9,
   },
-  heroButtons: {
-    display: 'flex',
-    gap: '16px',
-    marginTop: '12px'
+  heroBtn: {
+    backgroundColor: '#C5A059',
+    color: '#fff',
+    padding: '12px 32px',
+    borderRadius: '4px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    border: 'none',
   },
   section: {
-    padding: '64px 24px'
+    padding: '40px 24px',
   },
   sectionHeader: {
-    marginBottom: '32px'
-  },
-  sectionHeaderCentered: {
-    marginBottom: '48px',
-    textAlign: 'center'
-  },
-  sectionSub: {
-    fontSize: '11px',
-    fontWeight: '700',
-    letterSpacing: '2px',
-    color: 'var(--color-secondary-dark)',
-    textTransform: 'uppercase',
-    display: 'block',
-    marginBottom: '6px'
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '32px',
   },
   sectionTitle: {
-    fontSize: '28px',
-    color: 'var(--color-primary-dark)',
-    position: 'relative'
-  },
-  offersGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-    gap: '24px'
-  },
-  offerCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    padding: '32px 24px',
-    border: '2px dashed var(--color-secondary-light)'
-  },
-  offerTag: {
-    backgroundColor: 'var(--color-accent)',
-    color: 'white',
-    padding: '6px 16px',
-    borderRadius: '20px',
-    fontWeight: '700',
-    fontSize: '13px',
-    letterSpacing: '0.5px',
-    marginBottom: '16px'
-  },
-  offerCode: {
-    fontSize: '22px',
-    cursor: 'pointer',
-    color: 'var(--color-primary)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-    marginBottom: '12px',
-    backgroundColor: 'var(--color-border-light)',
-    padding: '8px 24px',
-    borderRadius: '4px',
-    width: '100%',
-    boxSizing: 'border-box'
-  },
-  copyTooltip: {
-    fontSize: '10px',
-    color: 'var(--color-text-muted)',
-    fontWeight: '400',
-    textTransform: 'none'
-  },
-  offerDesc: {
-    fontSize: '13px',
-    color: 'var(--color-text-muted)',
-    marginBottom: '20px',
-    flexGrow: 1
-  },
-  offerFooter: {
-    fontSize: '12px',
-    color: 'var(--color-text-dark)',
-    borderTop: '1px solid var(--color-border-light)',
-    paddingTop: '12px',
-    width: '100%'
-  },
-  categoriesSection: {
-    backgroundColor: 'var(--color-border-light)',
-    padding: '64px 0'
-  },
-  categoriesGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
-    gap: '20px'
-  },
-  categoryCard: {
-    backgroundColor: 'var(--color-bg-white)',
-    borderTop: '4px solid var(--color-primary)',
-    borderRadius: '8px',
-    padding: '24px 16px',
-    textAlign: 'center',
-    boxShadow: 'var(--shadow-sm)',
-    cursor: 'pointer',
-    transition: 'var(--transition-smooth)',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  categoryIconCircle: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '50%',
-    color: 'white',
-    fontWeight: '700',
     fontSize: '16px',
+    fontWeight: '700',
+    color: '#334155',
+    letterSpacing: '0.5px',
+  },
+  viewAllLink: {
+    fontSize: '14px',
+    color: '#6C1425',
+    fontWeight: '600',
+    cursor: 'pointer',
+  },
+  categoriesWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '16px',
+    overflowX: 'auto',
+    paddingBottom: '16px',
+  },
+  categoryCircleCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '12px',
+    cursor: 'pointer',
+    minWidth: '80px',
+  },
+  categoryCircleImg: {
+    width: '90px',
+    height: '90px',
+    borderRadius: '50%',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  },
+  categoryCircleName: {
+    fontSize: '13px',
+    fontWeight: '500',
+    color: '#334155',
+    textAlign: 'center',
+  },
+  carouselControls: {
+    display: 'flex',
+    gap: '8px',
+  },
+  controlCircle: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    border: '1px solid #cbd5e1',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '16px'
-  },
-  categoryName: {
-    fontSize: '16px',
-    fontWeight: '700',
-    marginBottom: '8px',
-    color: 'var(--color-primary-dark)'
-  },
-  categoryDesc: {
-    fontSize: '11px',
-    color: 'var(--color-text-muted)',
-    marginBottom: '16px',
-    lineHeight: '1.4',
-    flexGrow: 1
-  },
-  categoryLink: {
-    fontSize: '12px',
-    fontWeight: '600',
-    color: 'var(--color-primary)'
+    cursor: 'pointer',
+    color: '#64748b',
+    fontSize: '14px',
   },
   productCard: {
+    backgroundColor: '#fff',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
     display: 'flex',
     flexDirection: 'column',
-    padding: '0px',
-    overflow: 'hidden'
+    border: '1px solid #f1f5f9',
   },
-  productSwatch: {
-    height: '180px',
-    width: '100%',
-    cursor: 'pointer',
+  productImage: {
+    height: '220px',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
     position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'var(--transition-smooth)'
+    cursor: 'pointer',
   },
-  swatchText: {
-    color: 'white',
-    fontSize: '11px',
-    fontWeight: '600',
-    letterSpacing: '1px',
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    padding: '4px 12px',
-    borderRadius: '12px',
-    opacity: 0,
-    transition: 'var(--transition-fast)'
-  },
-  lowStockBadge: {
+  productBadge: {
     position: 'absolute',
     top: '12px',
     left: '12px',
-    backgroundColor: 'var(--color-accent)',
-    color: 'white',
+    color: '#fff',
     fontSize: '9px',
     fontWeight: '700',
-    padding: '3px 8px',
+    padding: '4px 8px',
     borderRadius: '4px',
-    textTransform: 'uppercase'
+    letterSpacing: '0.5px',
+  },
+  wishlistBtn: {
+    position: 'absolute',
+    top: '12px',
+    right: '12px',
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    backgroundColor: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    color: '#64748b',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
   },
   productInfo: {
     padding: '16px',
     display: 'flex',
     flexDirection: 'column',
-    flexGrow: 1
-  },
-  productCat: {
-    fontSize: '10px',
-    fontWeight: '700',
-    color: 'var(--color-secondary-dark)',
-    textTransform: 'uppercase',
-    marginBottom: '4px'
+    flexGrow: 1,
   },
   productName: {
-    fontSize: '15px',
+    fontSize: '14px',
     fontWeight: '600',
-    color: 'var(--color-primary-dark)',
-    cursor: 'pointer',
-    marginBottom: '6px',
+    color: '#1e293b',
+    marginBottom: '4px',
     lineHeight: '1.3',
-    flexGrow: 1
   },
-  ratingRow: {
-    fontSize: '11px',
-    color: 'var(--color-text-muted)',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    marginBottom: '12px'
-  },
-  ratingStars: {
-    color: 'var(--color-secondary)'
+  productCat: {
+    fontSize: '12px',
+    color: '#64748b',
+    marginBottom: '12px',
   },
   priceRow: {
     display: 'flex',
-    justifyContent: 'between',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 'auto'
+    marginTop: 'auto',
   },
   productPrice: {
     fontSize: '16px',
     fontWeight: '700',
-    color: 'var(--color-primary-dark)'
+    color: '#1e293b',
   },
-  priceUnit: {
-    fontSize: '11px',
-    fontWeight: '400',
-    color: 'var(--color-text-muted)'
-  },
-  addBtn: {
-    borderRadius: '12px',
-    padding: '6px 12px',
-    fontSize: '11px'
-  },
-  outOfStock: {
+  originalPrice: {
     fontSize: '12px',
-    fontWeight: '600',
-    color: 'var(--color-danger)'
+    color: '#94a3b8',
+    textDecoration: 'line-through',
   },
-  viewMoreRow: {
+  ratingRow: {
     display: 'flex',
-    justifyContent: 'center',
-    marginTop: '40px'
-  },
-  testimonialSection: {
-    backgroundColor: 'var(--color-primary-dark)',
-    padding: '80px 0'
-  },
-  testimonialsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '24px',
-    marginTop: '32px'
-  },
-  testimonialCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: '8px',
-    padding: '32px 24px',
-    color: 'var(--color-bg-cream)'
+    alignItems: 'center',
+    gap: '4px',
   },
   stars: {
-    color: 'var(--color-secondary)',
-    fontSize: '18px',
-    marginBottom: '12px'
+    color: '#fbbf24',
+    fontSize: '12px',
   },
-  testimonialText: {
-    fontSize: '13px',
-    fontStyle: 'italic',
-    lineHeight: '1.6',
-    marginBottom: '16px',
-    color: 'rgba(250, 248, 245, 0.8)'
+  reviewCount: {
+    color: '#94a3b8',
+    fontSize: '11px',
   },
-  testimonialAuthor: {
+  addToCartBtn: {
+    backgroundColor: '#6C1425',
+    color: '#fff',
+    padding: '12px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     fontSize: '13px',
     fontWeight: '600',
-    color: 'var(--color-secondary-light)'
+    cursor: 'pointer',
+    border: 'none',
+    width: '100%',
+    borderTopLeftRadius: '0',
+    borderTopRightRadius: '0',
+  },
+  featuresFooter: {
+    backgroundColor: '#FDF8F5',
+    borderTop: '1px solid #f1f5f9',
+    padding: '40px 0',
+    marginTop: '40px',
+  },
+  featuresGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '24px',
+  },
+  featureItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    justifyContent: 'center',
+  },
+  featureIcon: {
+    fontSize: '28px',
+  },
+  featureTitle: {
+    fontSize: '13px',
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: '4px',
+  },
+  featureDesc: {
+    fontSize: '12px',
+    color: '#64748b',
   }
 };
-
-// Add category cards styling hover trigger via standard script logic or CSS files.
-// Our CSS index.css covers card effects!
