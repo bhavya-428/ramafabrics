@@ -152,6 +152,21 @@ const initialSettings = {
   heroImage: '' // Fallback to CSS styled banner if empty
 };
 
+const initialCategories = [
+  { id: 'cat_1', name: 'Silk', isEnabled: true },
+  { id: 'cat_2', name: 'Cotton', isEnabled: true },
+  { id: 'cat_3', name: 'Linen', isEnabled: true },
+  { id: 'cat_4', name: 'Rayon', isEnabled: true },
+  { id: 'cat_5', name: 'Muslin', isEnabled: true },
+  { id: 'cat_6', name: 'Organza', isEnabled: true },
+  { id: 'cat_7', name: 'Chiffon', isEnabled: true },
+  { id: 'cat_8', name: 'Velvet', isEnabled: true },
+  { id: 'cat_9', name: 'Embroidery', isEnabled: true },
+  { id: 'cat_10', name: 'Printed Fabrics', isEnabled: true },
+  { id: 'cat_11', name: 'Dress Materials', isEnabled: true },
+  { id: 'cat_12', name: 'Ready-to-Wear', isEnabled: true }
+];
+
 export const ShopProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -193,6 +208,21 @@ export const ShopProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : []; // Array of { email, password, isAdmin, name }
   });
 
+  const [inventoryLogs, setInventoryLogs] = useState(() => {
+    const saved = localStorage.getItem('rf_inventory_logs');
+    return saved ? JSON.parse(saved) : []; // Array of stock movement logs
+  });
+
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem('rf_categories');
+    return saved ? JSON.parse(saved) : initialCategories;
+  });
+
+  const [reviews, setReviews] = useState(() => {
+    const saved = localStorage.getItem('rf_reviews');
+    return saved ? JSON.parse(saved) : []; // Array of { id, productId, orderId, userId, userName, rating, comment, date }
+  });
+
   // Client Session States
   const [currentUser, setCurrentUser] = useState(() => {
     const saved = localStorage.getItem('rf_current_user');
@@ -214,6 +244,11 @@ export const ShopProvider = ({ children }) => {
 
   const [wishlist, setWishlist] = useState(() => {
     const saved = localStorage.getItem('rf_wishlist');
+    return saved ? JSON.parse(saved) : []; // Array of product IDs
+  });
+
+  const [recentlyViewed, setRecentlyViewed] = useState(() => {
+    const saved = localStorage.getItem('rf_recently_viewed');
     return saved ? JSON.parse(saved) : []; // Array of product IDs
   });
 
@@ -241,12 +276,28 @@ export const ShopProvider = ({ children }) => {
   }, [users]);
 
   useEffect(() => {
+    localStorage.setItem('rf_inventory_logs', JSON.stringify(inventoryLogs));
+  }, [inventoryLogs]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_categories', JSON.stringify(categories));
+  }, [categories]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_reviews', JSON.stringify(reviews));
+  }, [reviews]);
+
+  useEffect(() => {
     localStorage.setItem('rf_current_user', JSON.stringify(currentUser));
   }, [currentUser]);
 
   useEffect(() => {
     localStorage.setItem('rf_cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_recently_viewed', JSON.stringify(recentlyViewed));
+  }, [recentlyViewed]);
 
   useEffect(() => {
     localStorage.setItem('rf_wishlist', JSON.stringify(wishlist));
@@ -299,6 +350,13 @@ export const ShopProvider = ({ children }) => {
       } else {
         return [...prev, productId];
       }
+    });
+  };
+
+  const addToRecentlyViewed = (productId) => {
+    setRecentlyViewed(prev => {
+      const filtered = prev.filter(id => id !== productId);
+      return [productId, ...filtered].slice(0, 10); // Keep last 10 viewed
     });
   };
 
@@ -363,7 +421,8 @@ export const ShopProvider = ({ children }) => {
       userEmail: currentUser ? currentUser.email : shippingInfo.email
     };
 
-    // Decrement stock for ordered items
+    // Decrement stock for ordered items and generate logs
+    const logs = [];
     setProducts(prevProducts =>
       prevProducts.map(prod => {
         const orderItem = cart.find(item => item.product.id === prod.id);
@@ -373,6 +432,26 @@ export const ShopProvider = ({ children }) => {
         return prod;
       })
     );
+    
+    cart.forEach(item => {
+      const product = products.find(p => p.id === item.product.id);
+      if (product) {
+        logs.push({
+          id: 'log-' + Date.now() + Math.random().toString(36).substr(2, 5),
+          timestamp: new Date().toISOString(),
+          productId: product.id,
+          productName: product.name,
+          prevStock: product.stock,
+          qtyChange: -item.quantity,
+          newStock: Math.max(0, product.stock - item.quantity),
+          actionType: 'Order Placed',
+          user: currentUser ? currentUser.email : shippingInfo.email
+        });
+      }
+    });
+    if (logs.length > 0) {
+      setInventoryLogs(prev => [...logs, ...prev].slice(0, 1000));
+    }
 
     // Save order
     setOrders(prevOrders => [newOrder, ...prevOrders]);
@@ -449,9 +528,76 @@ export const ShopProvider = ({ children }) => {
   };
 
   const updateOrderStatus = (orderId, newStatus) => {
-    setOrders(prev => prev.map(order => 
-      order.id === orderId ? { ...order, status: newStatus } : order
+    let orderToCancel = null;
+    setOrders(prev => prev.map(order => {
+      if (order.id === orderId) {
+        if ((newStatus === 'Cancelled' || newStatus === 'Rejected') && 
+            order.status !== 'Cancelled' && order.status !== 'Rejected') {
+           orderToCancel = order;
+        }
+        return { ...order, status: newStatus };
+      }
+      return order;
+    }));
+
+    // Restore stock if the order was just cancelled/rejected
+    if (orderToCancel) {
+       const logs = [];
+       setProducts(prevProducts => 
+         prevProducts.map(prod => {
+           const orderItem = orderToCancel.items.find(item => item.product.id === prod.id);
+           if (orderItem) {
+             return { ...prod, stock: prod.stock + orderItem.quantity };
+           }
+           return prod;
+         })
+       );
+       
+       orderToCancel.items.forEach(item => {
+         const product = products.find(p => p.id === item.product.id);
+         if (product) {
+           logs.push({
+              id: 'log-' + Date.now() + Math.random().toString(36).substr(2, 5),
+              timestamp: new Date().toISOString(),
+              productId: product.id,
+              productName: product.name,
+              prevStock: product.stock,
+              qtyChange: item.quantity,
+              newStock: product.stock + item.quantity,
+              actionType: 'Order ' + newStatus,
+              user: currentUser ? currentUser.name : 'System'
+           });
+         }
+       });
+       if (logs.length > 0) {
+         setInventoryLogs(prev => [...logs, ...prev].slice(0, 1000));
+       }
+    }
+  };
+
+  const updateProductStock = (productId, qtyChange, actionType = 'Manual Restock') => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const prevStock = product.stock;
+    const newStock = Math.max(0, prevStock + qtyChange); // Prevent negative stock
+
+    setProducts(prev => prev.map(p => 
+      p.id === productId ? { ...p, stock: newStock } : p
     ));
+
+    const log = {
+      id: 'log-' + Date.now() + Math.random().toString(36).substr(2, 5),
+      timestamp: new Date().toISOString(),
+      productId,
+      productName: product.name,
+      prevStock,
+      qtyChange: newStock - prevStock, // Actual change (accounts for bounds)
+      newStock,
+      actionType,
+      user: currentUser ? currentUser.name : 'Admin'
+    };
+    setInventoryLogs(prev => [log, ...prev].slice(0, 1000));
   };
 
   const updateSettings = (newSettings) => {
@@ -532,7 +678,15 @@ _I have completed the payment via UPI. Please confirm my order!_`;
         getUpiUrl,
         getWhatsAppLink,
         users,
-        setUsers
+        setUsers,
+        recentlyViewed,
+        addToRecentlyViewed,
+        inventoryLogs,
+        updateProductStock,
+        categories,
+        setCategories,
+        reviews,
+        setReviews
       }}
     >
       {children}

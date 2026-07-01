@@ -126,7 +126,6 @@ export const OrderManagement = ({ showToast }) => {
           >
             <option value="All">All Payments</option>
             <option value="UPI QR">UPI QR</option>
-            <option value="COD / Pay on Showroom">COD / Showroom</option>
           </select>
         </div>
       </div>

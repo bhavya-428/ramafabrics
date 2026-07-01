@@ -14,8 +14,15 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
     pincode: ''
   });
 
+  const [deliveryZone, setDeliveryZone] = useState('local'); // local, regional, national
   const [paymentMethod, setPaymentMethod] = useState('UPI');
   const [error, setError] = useState('');
+
+  const getDeliveryFee = () => {
+    if (deliveryZone === 'local') return 50;
+    if (deliveryZone === 'regional') return 100;
+    return 200;
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,15 +58,19 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
     }
 
     // Place Order
-    const newOrder = placeOrder(formData, paymentMethod);
+    const finalTotal = getCartTotal() + getDeliveryFee();
+    
+    // Add delivery details to order
+    const orderData = {
+      ...formData,
+      deliveryZone,
+      deliveryFee: getDeliveryFee(),
+    };
+
+    const newOrder = placeOrder(orderData, paymentMethod, finalTotal);
     setSelectedOrderId(newOrder.id);
 
-    if (paymentMethod === 'UPI') {
-      setRoute('payment');
-    } else {
-      // Cash on Delivery - Redirect straight to Orders page
-      setRoute('orders');
-    }
+    setRoute('payment');
   };
 
   if (cart.length === 0) {
@@ -184,6 +195,20 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
               />
             </div>
           </div>
+          
+          <div className="form-group" style={{ marginTop: '20px' }}>
+            <label className="form-label">Select Delivery Zone *</label>
+            <select 
+              value={deliveryZone} 
+              onChange={(e) => setDeliveryZone(e.target.value)}
+              className="form-input"
+              style={{ cursor: 'pointer' }}
+            >
+              <option value="local">Local (Vijayawada) - ₹50</option>
+              <option value="regional">Regional (AP & TS) - ₹100</option>
+              <option value="national">Rest of India - ₹200</option>
+            </select>
+          </div>
         </div>
 
         {/* Order Review and Payment Methods */}
@@ -209,9 +234,13 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 <span>Discount</span>
                 <span style={{ color: 'var(--color-success)' }}>-₹{getCartDiscount()}</span>
               </div>
+              <div style={styles.totalRow}>
+                <span>Delivery Fee</span>
+                <span>₹{getDeliveryFee()}</span>
+              </div>
               <div style={{ ...styles.totalRow, fontWeight: '700', fontSize: '16px', color: 'var(--color-primary-dark)' }}>
                 <span>Total Amount</span>
-                <span>₹{getCartTotal()}</span>
+                <span>₹{getCartTotal() + getDeliveryFee()}</span>
               </div>
             </div>
           </div>
@@ -223,14 +252,14 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
             <div style={styles.methods}>
               <label style={{
                 ...styles.methodLabel,
-                ...(paymentMethod === 'UPI' ? styles.activeMethodLabel : {})
+                ...styles.activeMethodLabel
               }}>
                 <input
                   type="radio"
                   name="paymentMethod"
                   value="UPI"
-                  checked={paymentMethod === 'UPI'}
-                  onChange={() => setPaymentMethod('UPI')}
+                  checked={true}
+                  readOnly
                   style={styles.radioInput}
                 />
                 <div style={styles.methodInfo}>
@@ -238,28 +267,10 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                   <span style={styles.methodDesc}>Scan QR with GPay, PhonePe, Paytm (Auto-generates working UPI)</span>
                 </div>
               </label>
-
-              <label style={{
-                ...styles.methodLabel,
-                ...(paymentMethod === 'COD' ? styles.activeMethodLabel : {})
-              }}>
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="COD"
-                  checked={paymentMethod === 'COD'}
-                  onChange={() => setPaymentMethod('COD')}
-                  style={styles.radioInput}
-                />
-                <div style={styles.methodInfo}>
-                  <strong>Cash on Delivery (COD)</strong>
-                  <span style={styles.methodDesc}>Pay when products are delivered to your doorstep</span>
-                </div>
-              </label>
             </div>
 
             <button type="submit" className="btn btn-gold" style={styles.submitBtn}>
-              {paymentMethod === 'UPI' ? 'Proceed to Pay ₹' + getCartTotal() : 'Place Order (COD)'}
+              Proceed to Pay ₹{getCartTotal() + getDeliveryFee()}
             </button>
           </div>
         </aside>

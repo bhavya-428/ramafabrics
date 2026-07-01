@@ -69,6 +69,21 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
     { name: 'Dress Materials', img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=200&q=80' }
   ];
 
+  const premiumSpotlight = [
+    {
+      id: 'p12',
+      title: 'Midnight Velvet Elegance',
+      subtitle: 'Experience the soft touch of our premium micro velvet.',
+      image: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?auto=format&fit=crop&w=800&q=80',
+    },
+    {
+      id: 'p15',
+      title: 'Banarasi Silk Heritage',
+      subtitle: 'Handwoven pure silk that defines royal luxury.',
+      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+    }
+  ];
+
   const getBadgeStyle = (index) => {
     if (index === 0) return { text: '20% OFF', bg: '#ef4444' }; // Red
     if (index === 1) return { text: 'NEW', bg: '#10b981' }; // Green
@@ -136,7 +151,30 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
         </div>
       </section>
 
-      {/* 3. FEATURED PRODUCTS */}
+      {/* 3. PREMIUM SPOTLIGHT */}
+      <section className="container" style={styles.spotlightSection}>
+        <div style={styles.sectionHeader}>
+          <h2 style={styles.sectionTitle}>THE PREMIUM EDIT</h2>
+          <span style={styles.viewAllLink} onClick={() => { setCategoryFilter('Silk'); setRoute('shop'); }}>Explore Silks →</span>
+        </div>
+        <div style={styles.spotlightGrid}>
+          {premiumSpotlight.map((spot, idx) => (
+            <div 
+              key={idx} 
+              style={{ ...styles.spotlightCard, backgroundImage: `url(${spot.image})` }}
+              onClick={() => handleViewProduct(spot.id)}
+            >
+              <div style={styles.spotlightOverlay}>
+                <h3 style={styles.spotlightTitle}>{spot.title}</h3>
+                <p style={styles.spotlightSubtitle}>{spot.subtitle}</p>
+                <button style={styles.spotlightBtn}>SHOP NOW</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. FEATURED PRODUCTS */}
       <section className="container" style={styles.section}>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>FEATURED PRODUCTS</h2>
@@ -158,7 +196,12 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
                   </div>
                 </div>
                 <div style={styles.productInfo}>
-                  <h3 style={styles.productName}>{product.name}</h3>
+                  <h3 
+                    style={{...styles.productName, cursor: 'pointer'}}
+                    onClick={() => handleViewProduct(product.id)}
+                  >
+                    {product.name}
+                  </h3>
                   <span style={styles.productCat}>{product.category}</span>
                   <div style={styles.priceRow}>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -201,7 +244,54 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
         </div>
       </section>
 
-      {/* 4. FEATURES FOOTER */}
+      {/* 5. HERITAGE & CRAFTSMANSHIP (ABOUT) */}
+      <section className="container" style={styles.heritageSection}>
+        <div style={styles.heritageGrid}>
+          <div style={styles.heritageImageWrapper}>
+            <img 
+              src="https://images.unsplash.com/photo-1606744888344-493238692677?auto=format&fit=crop&w=800&q=80" 
+              alt="Craftsmanship" 
+              style={styles.heritageImage} 
+            />
+            <div style={styles.heritageImageOverlay}></div>
+          </div>
+          <div style={styles.heritageContent}>
+            <span style={styles.heritageTag}>THE RAMA EXPERIENCE</span>
+            <h2 style={styles.heritageTitle}>Crafting Elegance Since 1995</h2>
+            <p style={styles.heritageText}>
+              For over two decades, Rama Fabrics has been the ultimate destination for connoisseurs of fine textiles. We source the most exquisite silks, breathable cottons, and intricate handlooms directly from master artisans across the country.
+            </p>
+            <p style={styles.heritageText}>
+              Experience the unparalleled quality and timeless elegance that defines our curated collections. Every thread tells a story of heritage, passion, and unparalleled craftsmanship.
+            </p>
+            <button 
+              onClick={() => setRoute('about')} 
+              className="btn btn-secondary"
+              style={{ marginTop: '12px' }}
+            >
+              Discover Our Story
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 6. NEWSLETTER SUBSCRIPTION */}
+      <section style={styles.newsletterSection}>
+        <div className="container">
+          <div style={styles.newsletterCard}>
+            <div style={styles.newsletterContent}>
+              <h2 style={styles.newsletterTitle}>Join Our Exclusive Community</h2>
+              <p style={styles.newsletterSubtitle}>Subscribe to receive updates on new arrivals, special offers, and early access to our premium collections.</p>
+              <div style={styles.newsletterForm} className="newsletter-form-mobile">
+                <input type="email" placeholder="Enter your email address" style={styles.newsletterInput} />
+                <button style={styles.newsletterBtn}>SUBSCRIBE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FEATURES FOOTER */}
       <section style={styles.featuresFooter}>
         <div className="container" style={styles.featuresGrid}>
           <div style={styles.featureItem}>
@@ -516,5 +606,172 @@ const styles = {
   featureDesc: {
     fontSize: '12px',
     color: '#64748b',
+  },
+  newsletterSection: {
+    padding: '60px 0 20px 0',
+  },
+  newsletterCard: {
+    backgroundColor: 'var(--color-primary-dark)',
+    borderRadius: '16px',
+    padding: '48px 24px',
+    textAlign: 'center',
+    backgroundImage: 'radial-gradient(var(--color-primary-light) 0.5px, transparent 0.5px), radial-gradient(var(--color-primary-light) 0.5px, var(--color-primary-dark) 0.5px)',
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 10px 10px',
+    boxShadow: '0 12px 24px rgba(125, 29, 43, 0.15)',
+  },
+  newsletterContent: {
+    maxWidth: '500px',
+    margin: '0 auto',
+  },
+  newsletterTitle: {
+    color: '#ffffff',
+    fontSize: '28px',
+    marginBottom: '12px',
+    fontFamily: 'var(--font-serif)',
+  },
+  newsletterSubtitle: {
+    color: '#e2e8f0',
+    fontSize: '14px',
+    marginBottom: '24px',
+    lineHeight: '1.6',
+  },
+  newsletterForm: {
+    display: 'flex',
+    gap: '8px',
+    width: '100%',
+    flexWrap: 'wrap',
+  },
+  newsletterInput: {
+    flexGrow: 1,
+    padding: '12px 16px',
+    borderRadius: '8px',
+    border: 'none',
+    fontSize: '14px',
+    outline: 'none',
+    minWidth: '200px',
+  },
+  newsletterBtn: {
+    padding: '12px 24px',
+    borderRadius: '8px',
+    border: 'none',
+    backgroundColor: '#C5A059',
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: '13px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    flexGrow: 1,
+  },
+  heritageSection: {
+    padding: '60px 0',
+  },
+  heritageGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '48px',
+    alignItems: 'center',
+  },
+  heritageImageWrapper: {
+    position: 'relative',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    boxShadow: '0 20px 40px rgba(125, 29, 43, 0.1)',
+  },
+  heritageImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    display: 'block',
+    aspectRatio: '4 / 3',
+  },
+  heritageImageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    background: 'linear-gradient(to right, rgba(0,0,0,0.1), transparent)',
+  },
+  heritageContent: {
+    paddingRight: '24px',
+  },
+  heritageTag: {
+    fontSize: '11px',
+    fontWeight: '800',
+    color: 'var(--color-secondary-dark)',
+    letterSpacing: '1px',
+    textTransform: 'uppercase',
+    marginBottom: '16px',
+    display: 'inline-block',
+    borderBottom: '2px solid var(--color-primary)',
+    paddingBottom: '4px',
+  },
+  heritageTitle: {
+    fontSize: '36px',
+    lineHeight: '1.2',
+    color: 'var(--color-primary-dark)',
+    marginBottom: '24px',
+    fontFamily: 'var(--font-serif)',
+  },
+  heritageText: {
+    fontSize: '15px',
+    color: '#475569',
+    marginBottom: '20px',
+    lineHeight: '1.7',
+  },
+  spotlightSection: {
+    padding: '40px 0',
+  },
+  spotlightGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '24px',
+    marginTop: '16px',
+  },
+  spotlightCard: {
+    position: 'relative',
+    height: '400px',
+    borderRadius: '12px',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    cursor: 'pointer',
+    overflow: 'hidden',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+  },
+  spotlightOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    padding: '40px 24px 24px',
+    background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+    color: '#ffffff',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  spotlightTitle: {
+    fontSize: '24px',
+    fontWeight: '700',
+    fontFamily: 'var(--font-serif)',
+    marginBottom: '8px',
+    color: '#ffffff',
+  },
+  spotlightSubtitle: {
+    fontSize: '14px',
+    color: '#e2e8f0',
+    marginBottom: '16px',
+  },
+  spotlightBtn: {
+    padding: '8px 20px',
+    backgroundColor: '#ffffff',
+    color: 'var(--color-primary-dark)',
+    border: 'none',
+    borderRadius: '4px',
+    fontWeight: '700',
+    fontSize: '12px',
+    cursor: 'pointer',
+    textTransform: 'uppercase',
   }
 };

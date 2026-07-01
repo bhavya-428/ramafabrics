@@ -143,7 +143,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
                   <div style={styles.productInfo}>
                     <span style={styles.productCat}>{product.category}</span>
                     <h3 
-                      style={styles.productName}
+                      style={{...styles.productName, cursor: 'pointer'}}
                       onClick={() => handleViewProduct(product.id)}
                     >
                       {product.name}

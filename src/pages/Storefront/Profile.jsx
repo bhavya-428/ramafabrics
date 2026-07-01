@@ -2,7 +2,8 @@ import React, { useContext } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Profile = ({ setRoute }) => {
-  const { currentUser, logout, orders } = useContext(ShopContext);
+  const { currentUser, logout, orders, updateOrderStatus, addReview } = useContext(ShopContext);
+  const [reviewForm, setReviewForm] = useState({ productId: null, orderId: null, rating: 5, comment: '' });
 
   if (!currentUser) {
     // Should be handled by App.jsx or Navbar routing, but just in case
@@ -102,11 +103,29 @@ export const Profile = ({ setRoute }) => {
                   
                   <div style={styles.orderFooter}>
                     <span style={styles.orderTotal}>Total: ₹{order.total}</span>
-                    <button style={styles.btnOutline} onClick={() => {
-                      window.location.hash = `payment/${order.id}`;
-                    }}>
-                      View Details
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {['Pending Payment', 'Paid', 'Confirmed'].includes(order.status) && (
+                        <button style={{...styles.btnOutline, color: '#ef4444', borderColor: '#ef4444'}} onClick={() => {
+                          if (window.confirm('Are you sure you want to cancel this order?')) {
+                            updateOrderStatus(order.id, 'Cancelled');
+                          }
+                        }}>
+                          Cancel Order
+                        </button>
+                      )}
+                      {order.status === 'Delivered' && (
+                        <button style={{...styles.btnOutline, color: '#0ea5e9', borderColor: '#0ea5e9'}} onClick={() => {
+                          setReviewForm({ productId: order.items[0].product.id, orderId: order.id, rating: 5, comment: '' });
+                        }}>
+                          Write Review
+                        </button>
+                      )}
+                      <button style={styles.btnOutline} onClick={() => {
+                        window.location.hash = `payment/${order.id}`;
+                      }}>
+                        View Details
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -114,6 +133,55 @@ export const Profile = ({ setRoute }) => {
           )}
         </div>
       </div>
+
+      {reviewForm.orderId && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(15, 23, 42, 0.5)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md animate-fade-in" style={{ backgroundColor: '#fff', borderRadius: '16px', padding: '32px', width: '100%', maxWidth: '448px' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '16px', color: '#1e293b' }}>Write a Review</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              addReview({
+                productId: reviewForm.productId,
+                orderId: reviewForm.orderId,
+                userName: currentUser.name,
+                rating: reviewForm.rating,
+                comment: reviewForm.comment
+              });
+              setReviewForm({ productId: null, orderId: null, rating: 5, comment: '' });
+              alert('Review submitted successfully!');
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#334155' }}>Rating</label>
+                <select 
+                  value={reviewForm.rating} 
+                  onChange={e => setReviewForm({...reviewForm, rating: parseInt(e.target.value)})}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                >
+                  <option value="5">5 - Excellent</option>
+                  <option value="4">4 - Good</option>
+                  <option value="3">3 - Average</option>
+                  <option value="2">2 - Poor</option>
+                  <option value="1">1 - Terrible</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '600', marginBottom: '8px', color: '#334155' }}>Comment</label>
+                <textarea 
+                  required
+                  value={reviewForm.comment}
+                  onChange={e => setReviewForm({...reviewForm, comment: e.target.value})}
+                  style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0', minHeight: '100px' }}
+                  placeholder="Share your experience..."
+                />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+                <button type="button" onClick={() => setReviewForm({ productId: null, orderId: null, rating: 5, comment: '' })} style={{ padding: '10px 16px', borderRadius: '8px', border: '1px solid #e2e8f0', backgroundColor: '#fff', cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', backgroundColor: '#6366f1', color: '#fff', fontWeight: 'bold', cursor: 'pointer' }}>Submit Review</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

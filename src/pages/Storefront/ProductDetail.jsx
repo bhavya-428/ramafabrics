@@ -8,7 +8,8 @@ export const ProductDetail = ({ productId, setRoute }) => {
     wishlist, 
     toggleWishlist, 
     recentlyViewed, 
-    addToRecentlyViewed 
+    addToRecentlyViewed,
+    reviews
   } = useContext(ShopContext);
 
   const [quantity, setQuantity] = useState(1);
@@ -95,6 +96,9 @@ export const ProductDetail = ({ productId, setRoute }) => {
     .filter((p) => recentlyViewed.includes(p.id) && p.id !== product.id)
     .slice(0, 4);
 
+  // Reviews for this product
+  const productReviews = reviews.filter(r => r.productId === product.id);
+
   return (
     <div className="container animate-fade-in page-bottom-padding" style={styles.detailContainer}>
       
@@ -178,6 +182,11 @@ export const ProductDetail = ({ productId, setRoute }) => {
             </div>
           </div>
 
+          {/* Product Description */}
+          <div style={styles.descriptionBox}>
+            <p style={styles.descriptionText}>{product.description}</p>
+          </div>
+
           {/* Care & details */}
           <div style={styles.specificationsBox}>
             <h3 style={styles.specTitle}>Fabric Details</h3>
@@ -185,15 +194,31 @@ export const ProductDetail = ({ productId, setRoute }) => {
               <tbody>
                 <tr>
                   <td style={styles.specKey}>Material Type</td>
-                  <td style={styles.specVal}>{product.category} weave blend</td>
+                  <td style={styles.specVal}>100% {product.category}</td>
                 </tr>
                 <tr>
-                  <td style={styles.specKey}>Care Instructions</td>
-                  <td style={styles.specVal}>Dry clean recommended or hand wash cold. Do not bleach.</td>
+                  <td style={styles.specKey}>Width</td>
+                  <td style={styles.specVal}>44 inches (112 cm)</td>
                 </tr>
                 <tr>
-                  <td style={styles.specKey}>Estimated Delivery</td>
-                  <td style={styles.specVal}>Delivered in 3 - 5 business days. Eligible for COD.</td>
+                  <td style={styles.specKey}>Pattern</td>
+                  <td style={styles.specVal}>{product.name.includes('Print') ? 'Printed' : product.name.includes('Embroidery') ? 'Embroidered' : 'Solid / Handwoven'}</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Transparency</td>
+                  <td style={styles.specVal}>{['Organza', 'Chiffon', 'Muslin'].includes(product.category) ? 'Semi-Transparent' : 'Opaque'}</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Wash Care</td>
+                  <td style={styles.specVal}>{['Silk', 'Organza', 'Chiffon', 'Velvet'].includes(product.category) ? 'Dry Clean Only' : 'Hand wash cold. Do not bleach.'}</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Returns</td>
+                  <td style={styles.specVal}>7-days easy returns policy.</td>
+                </tr>
+                <tr>
+                  <td style={styles.specKey}>Delivery</td>
+                  <td style={styles.specVal}>Dispatched in 24 hours.</td>
                 </tr>
               </tbody>
             </table>
@@ -278,11 +303,39 @@ export const ProductDetail = ({ productId, setRoute }) => {
         </div>
       </div>
 
+      {/* 3.5 REVIEWS SECTION */}
+      <div style={styles.reviewsSection}>
+        <h2 style={styles.recentTitle}>Customer Reviews</h2>
+        {productReviews.length === 0 ? (
+          <p style={{ color: '#7e818c', fontSize: '13px' }}>No reviews yet. Be the first to review this product!</p>
+        ) : (
+          <div style={styles.reviewsList}>
+            {productReviews.map((review) => (
+              <div key={review.id} style={styles.reviewCard}>
+                <div style={styles.reviewHeader}>
+                  <div style={styles.reviewAuthor}>
+                    <div style={styles.reviewAvatar}>{review.userName.charAt(0).toUpperCase()}</div>
+                    <span style={styles.reviewName}>{review.userName}</span>
+                  </div>
+                  <div style={styles.reviewRating}>
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <span key={i} style={{ color: i < review.rating ? '#ff9f00' : '#e2e8f0', fontSize: '16px' }}>★</span>
+                    ))}
+                  </div>
+                </div>
+                <p style={styles.reviewComment}>{review.comment}</p>
+                <span style={styles.reviewDate}>{new Date(review.date).toLocaleDateString()}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       {/* 4. RECENTLY VIEWED PRODUCTS CAROUSEL */}
       {recentlyViewedItems.length > 0 && (
         <div style={styles.recentlyViewedSection}>
           <h2 style={styles.recentTitle}>Recently Viewed Fabrics</h2>
-          <div className="mobile-two-column" style={styles.recentGrid}>
+          <div style={styles.recentGrid}>
             {recentlyViewedItems.map((item) => (
               <div 
                 key={item.id} 
@@ -491,6 +544,14 @@ const styles = {
     transition: 'all 0.2s ease',
     padding: 0
   },
+  descriptionBox: {
+    margin: '12px 0 20px',
+  },
+  descriptionText: {
+    fontSize: '14.5px',
+    color: '#475569',
+    lineHeight: '1.6',
+  },
   specificationsBox: {
     backgroundColor: '#ffffff',
     border: '1px solid #eaeaec',
@@ -677,8 +738,65 @@ const styles = {
     marginBottom: '20px',
     textAlign: 'left'
   },
+  reviewsSection: {
+    marginTop: '40px',
+    borderTop: '1px solid #eaeaec',
+    paddingTop: '24px'
+  },
+  reviewsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  },
+  reviewCard: {
+    padding: '16px',
+    borderRadius: '8px',
+    backgroundColor: '#f8fafc',
+    border: '1px solid #e2e8f0'
+  },
+  reviewHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '8px'
+  },
+  reviewAuthor: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+  reviewAvatar: {
+    width: '28px',
+    height: '28px',
+    borderRadius: '50%',
+    backgroundColor: 'var(--color-primary)',
+    color: '#fff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold'
+  },
+  reviewName: {
+    fontSize: '14px',
+    fontWeight: '600',
+    color: '#1e293b'
+  },
+  reviewComment: {
+    fontSize: '13.5px',
+    color: '#475569',
+    lineHeight: '1.5',
+    marginBottom: '8px'
+  },
+  reviewDate: {
+    fontSize: '11px',
+    color: '#94a3b8'
+  },
   recentGrid: {
-    marginTop: '12px'
+    marginTop: '12px',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+    gap: '16px',
   },
   recentCard: {
     display: 'flex',
