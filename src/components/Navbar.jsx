@@ -1,8 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { ShopContext } from '../context/ShopContext';
+import { Menu, X, Search, Heart, ShoppingBag, User } from 'lucide-react';
 
 export const Navbar = ({ currentPath, setRoute }) => {
   const { cart, currentUser, searchQuery, setSearchQuery } = useContext(ShopContext);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const cartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -10,296 +12,159 @@ export const Navbar = ({ currentPath, setRoute }) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setRoute('shop');
+      setIsMobileMenuOpen(false);
     }
   };
 
   const handleNav = (route, e) => {
     e.preventDefault();
     setRoute(route);
+    setIsMobileMenuOpen(false);
   };
 
-  return (
-    <header style={styles.header}>
-     
+  const navLinks = [
+    { name: 'Home', path: '' },
+    { name: 'Our Fabrics', path: 'shop' },
+    { name: 'New Arrivals', path: 'new-arrivals' },
+    { name: 'Best Sellers', path: 'best-sellers' },
+    { name: 'Offers', path: 'offers' },
+    { name: 'About Us', path: 'about' },
+    { name: 'Contact Us', path: 'contact' },
+  ];
 
+  return (
+    <header className="bg-white border-b border-slate-100 sticky top-0 z-[100] w-full font-sans">
       {/* Main Header (Logo, Search, Icons) */}
-      <div style={styles.mainHeader}>
-        <div className="container flex align-center justify-between" style={{ height: '100%', gap: '40px' }}>
+      <div className="border-b border-slate-50">
+        <div className="container mx-auto px-4 h-[70px] md:h-[90px] flex items-center justify-between gap-4 md:gap-10">
           
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden p-2 text-slate-600"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+
           {/* Logo */}
-          <a href="#home" onClick={(e) => handleNav('', e)} style={styles.logoContainer}>
-            <div style={styles.logoIcon}>R</div>
-            <div style={styles.logoTextWrapper}>
-              <span style={styles.logoTitle}>RAMA</span>
-              <span style={styles.logoSubtitle}>FABRICS</span>
-              <span style={styles.logoTagline}>Your Style. Our Fabrics.</span>
+          <a href="#home" onClick={(e) => handleNav('', e)} className="flex items-center gap-2 md:gap-3 no-underline">
+            <div className="w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-[#C5A059] flex items-center justify-center text-[#6C1425] text-xl md:text-3xl font-serif font-bold bg-white">R</div>
+            <div className="flex flex-col leading-none">
+              <span className="text-[#6C1425] text-lg md:text-2xl font-extrabold font-serif tracking-widest">RAMA</span>
+              <span className="text-[#6C1425] text-xs md:text-base font-semibold font-serif tracking-[0.15em] md:tracking-[0.2em]">FABRICS</span>
+              <span className="text-[#C5A059] text-[9px] md:text-[11px] font-semibold mt-[2px] hidden sm:block">Your Style. Our Fabrics.</span>
             </div>
           </a>
 
-          {/* Search Bar */}
-          <form style={styles.searchContainer} onSubmit={handleSearchSubmit}>
+          {/* Desktop Search Bar */}
+          <form className="hidden md:flex flex-grow max-w-[600px] relative" onSubmit={handleSearchSubmit}>
             <input 
               type="text" 
               placeholder="Search by fabric name, material, color, category..." 
-              style={styles.searchInput}
+              className="w-full py-3 pl-5 pr-14 rounded-lg border border-slate-200 text-sm text-slate-800 bg-slate-50 outline-none focus:border-[#C5A059] transition-colors"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <button type="submit" style={styles.searchBtn}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
+            <button type="submit" className="absolute right-0 top-0 h-full w-14 bg-[#6C1425] hover:bg-[#8A1A30] text-white border-none rounded-r-lg cursor-pointer flex items-center justify-center transition-colors">
+              <Search size={18} />
             </button>
           </form>
 
           {/* Action Icons */}
-          <div style={styles.actions}>
+          <div className="flex gap-4 md:gap-8">
             {/* Wishlist */}
-            <a href="#wishlist" onClick={(e) => handleNav('wishlist', e)} style={styles.actionItem}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-              </svg>
-              <span style={styles.actionText}>Wishlist</span>
+            <a href="#wishlist" onClick={(e) => handleNav('wishlist', e)} className="hidden sm:flex flex-col items-center gap-1 text-slate-600 hover:text-[#6C1425] cursor-pointer no-underline transition-colors">
+              <Heart size={22} strokeWidth={1.5} />
+              <span className="text-[11px] font-medium hidden md:block">Wishlist</span>
             </a>
 
             {/* Cart */}
-            <a href="#cart" onClick={(e) => handleNav('cart', e)} style={styles.actionItem}>
-              <div style={{ position: 'relative' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-                {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
+            <a href="#cart" onClick={(e) => handleNav('cart', e)} className="flex flex-col items-center gap-1 text-slate-600 hover:text-[#6C1425] cursor-pointer relative no-underline transition-colors">
+              <div className="relative">
+                <ShoppingBag size={22} strokeWidth={1.5} />
+                {cartCount > 0 && <span className="absolute -top-1.5 -right-2 bg-[#C5A059] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">{cartCount}</span>}
               </div>
-              <span style={styles.actionText}>Cart</span>
+              <span className="text-[11px] font-medium hidden md:block">Cart</span>
             </a>
 
             {/* Profile */}
-            <a href="#profile" onClick={(e) => currentUser ? handleNav('profile', e) : handleNav('login', e)} style={styles.actionItem}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-              <span style={styles.actionText}>Profile</span>
+            <a href="#profile" onClick={(e) => currentUser ? handleNav('profile', e) : handleNav('login', e)} className="hidden sm:flex flex-col items-center gap-1 text-slate-600 hover:text-[#6C1425] cursor-pointer no-underline transition-colors">
+              <User size={22} strokeWidth={1.5} />
+              <span className="text-[11px] font-medium hidden md:block">Profile</span>
             </a>
           </div>
         </div>
       </div>
 
-      {/* Secondary Navigation */}
-      <div style={styles.secondaryNav}>
-        <div className="container" style={{ display: 'flex', gap: '32px' }}>
-          <a href="#home" onClick={(e) => handleNav('', e)} style={{ ...styles.navLink, ...((currentPath === '' || currentPath === 'home') ? styles.activeNavLink : {}) }}>Home</a>
-          <a href="#shop" onClick={(e) => handleNav('shop', e)} style={{ ...styles.navLink, ...(currentPath === 'shop' ? styles.activeNavLink : {}) }}>Our Fabrics</a>
-          <a href="#new-arrivals" onClick={(e) => handleNav('new-arrivals', e)} style={{ ...styles.navLink, ...(currentPath === 'new-arrivals' ? styles.activeNavLink : {}) }}>New Arrivals</a>
-          <a href="#best-sellers" onClick={(e) => handleNav('best-sellers', e)} style={{ ...styles.navLink, ...(currentPath === 'best-sellers' ? styles.activeNavLink : {}) }}>Best Sellers</a>
-          <a href="#offers" onClick={(e) => handleNav('offers', e)} style={{ ...styles.navLink, ...(currentPath === 'offers' ? styles.activeNavLink : {}) }}>Offers</a>
-          <a href="#about" onClick={(e) => handleNav('about', e)} style={{ ...styles.navLink, ...(currentPath === 'about' ? styles.activeNavLink : {}) }}>About Us</a>
-          <a href="#contact" onClick={(e) => handleNav('contact', e)} style={{ ...styles.navLink, ...(currentPath === 'contact' ? styles.activeNavLink : {}) }}>Contact Us</a>
+      {/* Mobile Search Bar (Visible only on mobile when menu is not open) */}
+      {!isMobileMenuOpen && (
+        <div className="md:hidden px-4 py-2 bg-white border-b border-slate-100">
+           <form className="flex w-full relative" onSubmit={handleSearchSubmit}>
+            <input 
+              type="text" 
+              placeholder="Search fabrics..." 
+              className="w-full py-2.5 pl-4 pr-12 rounded-lg border border-slate-200 text-sm text-slate-800 bg-slate-50 outline-none focus:border-[#C5A059]"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <button type="submit" className="absolute right-0 top-0 h-full w-12 bg-[#6C1425] text-white border-none rounded-r-lg cursor-pointer flex items-center justify-center">
+              <Search size={16} />
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Desktop Secondary Navigation */}
+      <div className="hidden md:block bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 flex gap-8">
+          {navLinks.map((link) => (
+            <a 
+              key={link.path}
+              href={`#${link.path || 'home'}`} 
+              onClick={(e) => handleNav(link.path, e)} 
+              className={`text-sm py-4 cursor-pointer no-underline flex items-center gap-1 border-b-2 transition-colors ${
+                (currentPath === link.path || (currentPath === 'home' && link.path === '')) 
+                  ? 'text-[#6C1425] font-semibold border-[#6C1425]' 
+                  : 'text-slate-700 font-medium border-transparent hover:text-[#6C1425]'
+              }`}
+            >
+              {link.name}
+            </a>
+          ))}
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 top-[70px] bg-white z-[90] overflow-y-auto">
+          <div className="flex flex-col p-4 border-b border-slate-100">
+            {navLinks.map((link) => (
+              <a 
+                key={link.path}
+                href={`#${link.path || 'home'}`} 
+                onClick={(e) => handleNav(link.path, e)} 
+                className={`py-4 text-base font-medium border-b border-slate-100 ${
+                  (currentPath === link.path || (currentPath === 'home' && link.path === '')) 
+                    ? 'text-[#6C1425]' 
+                    : 'text-slate-700'
+                }`}
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
+          <div className="p-4 flex flex-col gap-4">
+            <a href="#profile" onClick={(e) => currentUser ? handleNav('profile', e) : handleNav('login', e)} className="flex items-center gap-3 py-3 text-slate-700 font-medium">
+              <User size={20} />
+              {currentUser ? 'My Profile' : 'Login / Register'}
+            </a>
+            <a href="#wishlist" onClick={(e) => handleNav('wishlist', e)} className="flex items-center gap-3 py-3 text-slate-700 font-medium">
+              <Heart size={20} />
+              My Wishlist
+            </a>
+          </div>
+        </div>
+      )}
     </header>
   );
-};
-
-const styles = {
-  header: {
-    backgroundColor: '#fff',
-    borderBottom: '1px solid #f1f5f9',
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-    width: '100%',
-    fontFamily: 'var(--font-sans)',
-  },
-  announcementBar: {
-    backgroundColor: '#6C1425',
-    color: '#FDF2E9',
-    fontSize: '12px',
-    fontWeight: '500',
-    padding: '8px 0',
-  },
-  announcementContainer: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  announcementItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '6px',
-  },
-  mainHeader: {
-    height: '90px',
-    borderBottom: '1px solid #f8fafc',
-  },
-  logoContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    textDecoration: 'none',
-  },
-  logoIcon: {
-    width: '56px',
-    height: '56px',
-    borderRadius: '50%',
-    border: '2px solid #C5A059',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#6C1425',
-    fontSize: '32px',
-    fontFamily: 'var(--font-serif)',
-    fontWeight: '700',
-    background: '#fff',
-  },
-  logoTextWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    lineHeight: '1.1',
-  },
-  logoTitle: {
-    color: '#6C1425',
-    fontSize: '24px',
-    fontWeight: '800',
-    fontFamily: 'var(--font-serif)',
-    letterSpacing: '2px',
-  },
-  logoSubtitle: {
-    color: '#6C1425',
-    fontSize: '16px',
-    fontWeight: '600',
-    fontFamily: 'var(--font-serif)',
-    letterSpacing: '3px',
-  },
-  logoTagline: {
-    color: '#C5A059',
-    fontSize: '11px',
-    fontWeight: '600',
-    marginTop: '2px',
-  },
-  searchContainer: {
-    flexGrow: 1,
-    maxWidth: '600px',
-    display: 'flex',
-    position: 'relative',
-  },
-  searchInput: {
-    width: '100%',
-    padding: '12px 20px',
-    paddingRight: '60px',
-    borderRadius: '8px',
-    border: '1px solid #E2E8F0',
-    fontSize: '14px',
-    color: '#333',
-    backgroundColor: '#F8FAFC',
-    outline: 'none',
-  },
-  searchBtn: {
-    position: 'absolute',
-    right: '0',
-    top: '0',
-    height: '100%',
-    width: '56px',
-    backgroundColor: '#6C1425',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '0 8px 8px 0',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actions: {
-    display: 'flex',
-    gap: '32px',
-  },
-  actionItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-    color: '#475569',
-    cursor: 'pointer',
-    position: 'relative',
-    textDecoration: 'none',
-  },
-  actionText: {
-    fontSize: '11px',
-    fontWeight: '500',
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: '-6px',
-    right: '-8px',
-    backgroundColor: '#C5A059',
-    color: '#fff',
-    fontSize: '10px',
-    fontWeight: '700',
-    width: '16px',
-    height: '16px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  secondaryNav: {
-    backgroundColor: '#fff',
-    borderBottom: '1px solid #E2E8F0',
-    padding: '0',
-  },
-  navLink: {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#334155',
-    padding: '16px 0',
-    cursor: 'pointer',
-    textDecoration: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '4px',
-    borderBottom: '2px solid transparent',
-  },
-  activeNavLink: {
-    color: '#6C1425',
-    fontWeight: '600',
-    borderBottomColor: '#6C1425',
-  },
-  dropdownArrow: {
-    fontSize: '9px',
-    color: '#94A3B8',
-  },
-  dropdownCard: {
-    position: 'absolute',
-    top: '100%',
-    right: 0,
-    backgroundColor: '#fff',
-    boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
-    borderRadius: '8px',
-    padding: '8px 0',
-    minWidth: '150px',
-    zIndex: 110,
-    border: '1px solid #E2E8F0',
-  },
-  dropdownHeader: {
-    padding: '8px 16px',
-    borderBottom: '1px solid #f1f5f9',
-    fontWeight: '600',
-    fontSize: '13px',
-    color: '#334155',
-  },
-  dropdownItem: {
-    display: 'block',
-    padding: '10px 16px',
-    fontSize: '13px',
-    color: '#475569',
-    textDecoration: 'none',
-    border: 'none',
-    background: 'none',
-    width: '100%',
-    textAlign: 'left',
-    cursor: 'pointer',
-  }
 };

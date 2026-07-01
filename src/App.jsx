@@ -149,10 +149,10 @@ function AppContent() {
         );
       default:
         return (
-          <div className="container" style={{ padding: '80px 24px', textAlign: 'center' }}>
-            <h2>404 - Page Not Found</h2>
-            <p style={{ marginTop: '8px', color: 'var(--color-text-muted)' }}>The page you are looking for does not exist.</p>
-            <button onClick={() => handleSetRoute('')} className="btn btn-primary" style={{ marginTop: '20px' }}>
+          <div className="container mx-auto px-4 py-20 text-center">
+            <h2 className="text-2xl font-bold font-serif text-[#6C1425]">404 - Page Not Found</h2>
+            <p className="mt-2 text-slate-500">The page you are looking for does not exist.</p>
+            <button onClick={() => handleSetRoute('')} className="mt-5 px-6 py-2 bg-[#6C1425] text-white rounded hover:bg-[#8A1A30] transition-colors font-medium">
               Return Home
             </button>
           </div>
@@ -164,27 +164,15 @@ function AppContent() {
   const isAdminView = route === 'admin';
 
   return (
-    <div style={styles.appWrapper}>
+    <div className="flex flex-col min-h-screen bg-[#FDF2E9]">
       {!isAdminView && <Navbar currentPath={route} setRoute={handleSetRoute} />}
-      <main style={styles.mainWrapper}>
+      <main className="flex-grow">
         {renderPage()}
       </main>
       {!isAdminView && <Footer setRoute={handleSetRoute} />}
     </div>
   );
 }
-
-const styles = {
-  appWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: '100vh',
-    backgroundColor: 'var(--color-bg-cream)'
-  },
-  mainWrapper: {
-    flexGrow: 1
-  }
-};
 
 export default function App() {
   return (

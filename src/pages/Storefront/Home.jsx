@@ -161,30 +161,40 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
                   <h3 style={styles.productName}>{product.name}</h3>
                   <span style={styles.productCat}>{product.category}</span>
                   <div style={styles.priceRow}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={styles.productPrice}>₹{product.price}</span>
-                      {product.originalPrice && (
-                        <span style={styles.originalPrice}>₹{product.originalPrice}</span>
-                      )}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={styles.productPrice}>₹{product.price}</span>
+                        {product.originalPrice && (
+                          <span style={styles.originalPrice}>₹{product.originalPrice}</span>
+                        )}
+                      </div>
+                      <div style={styles.ratingRow}>
+                        <span style={styles.stars}>★★★★★</span>
+                        <span style={styles.reviewCount}>({Math.floor(Math.random() * 100) + 20})</span>
+                      </div>
                     </div>
-                    <div style={styles.ratingRow}>
-                      <span style={styles.stars}>★★★★★</span>
-                      <span style={styles.reviewCount}>({Math.floor(Math.random() * 100) + 20})</span>
-                    </div>
+                    {cart.find(c => c.product.id === product.id) ? (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
+                        <button 
+                          style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                          onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                        >-</button>
+                        <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
+                        <button 
+                          style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                          onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                        >+</button>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={() => addToCart(product, 1)}
+                        className="btn btn-primary btn-sm"
+                      >
+                        + Add
+                      </button>
+                    )}
                   </div>
                 </div>
-                {cart.find(c => c.product.id === product.id) ? (
-                  <div style={{...styles.addToCartBtn, display: 'flex', justifyContent: 'space-between', padding: '8px 16px', backgroundColor: '#FDF8F5', color: '#1e293b', borderTop: '1px solid #f1f5f9'}}>
-                    <button style={styles.qtyBtn} onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}>-</button>
-                    <span style={{fontWeight: '700'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
-                    <button style={styles.qtyBtn} onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}>+</button>
-                  </div>
-                ) : (
-                  <button style={styles.addToCartBtn} onClick={() => addToCart(product, 1)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                    Add to Cart
-                  </button>
-                )}
               </div>
             );
           })}
@@ -468,25 +478,7 @@ const styles = {
     color: '#94a3b8',
     fontSize: '11px',
   },
-  addToCartBtn: {
-    backgroundColor: '#6C1425',
-    color: '#fff',
-    padding: '12px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '13px',
-    fontWeight: '600',
-    cursor: 'pointer',
-    border: 'none',
-    width: '100%',
-    borderTopLeftRadius: '0',
-    borderTopRightRadius: '0',
-  },
   qtyBtn: {
-    backgroundColor: '#fff',
-    border: '1px solid #cbd5e1',
-    borderRadius: '4px',
     width: '28px',
     height: '28px',
     display: 'flex',
@@ -494,7 +486,6 @@ const styles = {
     justifyContent: 'center',
     cursor: 'pointer',
     fontWeight: '700',
-    color: '#64748b'
   },
   featuresFooter: {
     backgroundColor: '#FDF8F5',

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const BestSellers = ({ setRoute, setSelectedProductId }) => {
-  const { products, addToCart } = useContext(ShopContext);
+  const { products, addToCart, cart, updateCartQty } = useContext(ShopContext);
 
   // Filter best sellers (using high rating and reviews as proxy)
   const bestSellers = [...products]
@@ -45,12 +45,26 @@ export const BestSellers = ({ setRoute, setSelectedProductId }) => {
 
               <div style={styles.priceRow}>
                 <span style={styles.productPrice}>₹{product.price}</span>
-                <button 
-                  onClick={() => addToCart(product, 1)}
-                  className="btn btn-primary btn-sm"
-                >
-                  + Add
-                </button>
+                {cart.find(c => c.product.id === product.id) ? (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
+                    <button 
+                      style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                      onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                    >-</button>
+                    <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
+                    <button 
+                      style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
+                      onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                    >+</button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => addToCart(product, 1)}
+                    className="btn btn-primary btn-sm"
+                  >
+                    + Add
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -159,5 +173,14 @@ const styles = {
     fontSize: '16px',
     fontWeight: '700',
     color: 'var(--color-primary-dark)'
+  },
+  qtyBtn: {
+    width: '28px',
+    height: '28px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    fontWeight: '700',
   }
 };

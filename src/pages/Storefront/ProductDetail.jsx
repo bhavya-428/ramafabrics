@@ -573,7 +573,7 @@ const styles = {
   qtyBox: {
     display: 'flex',
     alignItems: 'center',
-    border: '1px solid #cbd5e1',
+    border: '1px solid var(--color-primary)',
     borderRadius: '4px',
     overflow: 'hidden'
   },
@@ -588,13 +588,13 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#282c3f'
+    color: 'var(--color-primary)'
   },
   qtyVal: {
     padding: '0 16px',
     fontSize: '13px',
     fontWeight: '700',
-    color: '#282c3f'
+    color: 'var(--color-primary)'
   },
   actionButtonsRow: {
     display: 'flex',
