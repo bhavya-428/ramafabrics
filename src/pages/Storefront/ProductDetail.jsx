@@ -335,7 +335,7 @@ export const ProductDetail = ({ productId, setRoute }) => {
       {recentlyViewedItems.length > 0 && (
         <div style={styles.recentlyViewedSection}>
           <h2 style={styles.recentTitle}>Recently Viewed Fabrics</h2>
-          <div style={styles.recentGrid}>
+          <div className="mobile-carousel grid grid-4 gap-3">
             {recentlyViewedItems.map((item) => (
               <div 
                 key={item.id} 

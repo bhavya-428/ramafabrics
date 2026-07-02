@@ -37,7 +37,7 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
     { name: 'Chiffon', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3dMHeVW1P8kLQAjtsmFR6JnyYg-LVhTzbVH_dXOMDID-w9apA3cUeumI&s=10' },
     { name: 'Velvet', img: 'https://mmcdn.onlinefabricstore.com/wp-content/uploads/2017/03/IMG_0286-edit.jpg' },
     { name: 'Embroidery', img: 'https://www.tradeuno.com/cdn/shop/files/IMG_E9604_8fdffa25-d443-4c70-b4d0-75140b29a8d6.jpg?v=1755798568&width=1108' },
-    { name: 'Printed Fabrics', img: 'https://akrithi.com/cdn/shop/files/IMG_8134.jpg?v=1722780291&width=2000' },
+    { name: 'Printed Fabrics', img: 'https://akrithi.com/cdn/shop/files/IMG_8134.jpg?v=1722780291&width=F' },
     { name: 'Dress Materials', img: 'https://www.royalexport.in/product-img/elegant-simmer-silk-dress-mate-1734689863.jpg' }
   ];
 
@@ -113,7 +113,7 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
           <span style={styles.viewAllLink} onClick={() => { setCategoryFilter('All'); setRoute('shop'); }}>View All →</span>
         </div>
         
-        <div style={styles.categoriesWrapper}>
+        <div className="mobile-carousel" style={styles.categoriesWrapper}>
           {categories.map((cat, idx) => (
             <div key={idx} style={styles.categoryCircleCard} onClick={() => handleCategoryClick(cat.name)}>
               <div style={{ ...styles.categoryCircleImg, backgroundImage: `url(${cat.img})` }}></div>
@@ -129,7 +129,7 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
           <h2 style={styles.sectionTitle}>THE PREMIUM EDIT</h2>
           <span style={styles.viewAllLink} onClick={() => { setCategoryFilter('Silk'); setRoute('shop'); }}>Explore Silks →</span>
         </div>
-        <div style={styles.spotlightGrid}>
+        <div className="grid grid-2 gap-3" style={{ marginTop: '16px' }}>
           {premiumSpotlight.map((spot, idx) => (
             <div 
               key={idx} 
@@ -156,8 +156,8 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
           </div>
         </div>
         
-        <div className="grid grid-4 gap-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
-          {featuredProducts.concat(featuredProducts[0] || []).slice(0, 5).map((product, idx) => {
+        <div className="mobile-carousel grid grid-4 gap-3">
+          {featuredProducts.concat(featuredProducts[0] || []).slice(0, 4).map((product, idx) => {
             const badge = getBadgeStyle(idx);
             return (
               <div key={idx} style={{...styles.productCard, cursor: 'pointer'}} onClick={() => handleViewProduct(product.id)}>
@@ -265,10 +265,7 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
         <div className="container" style={styles.featuresGrid}>
           <div style={styles.featureItem}>
             <div style={styles.featureIcon}>🚚</div>
-            <div>
-              <h4 style={styles.featureTitle}>FREE SHIPPING</h4>
-              <p style={styles.featureDesc}>On orders above ₹999</p>
-            </div>
+            
           </div>
           <div style={styles.featureItem}>
             <div style={styles.featureIcon}>🛡️</div>

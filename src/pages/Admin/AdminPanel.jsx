@@ -17,7 +17,8 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
     addOffer,
     deleteOffer,
     updateOrderStatus,
-    updateSettings
+    updateSettings,
+    logout
   } = useContext(ShopContext);
 
   // Auth States
@@ -31,6 +32,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
   // Admin Active Tab
   const [activeTab, setActiveTab] = useState('dashboard');
   const [curationSearch, setCurationSearch] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Modal / Form States
   const [showProductModal, setShowProductModal] = useState(false);
@@ -132,7 +134,8 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
   return (
     <div className="flex h-screen bg-slate-50 font-sans">
       {/* Sidebar Navigation */}
-      <div className="w-72 bg-[#1e2336] text-slate-300 flex flex-col shadow-2xl z-20">
+      {isMobileMenuOpen && <div className="fixed inset-0 bg-slate-900/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />}
+      <div className={`w-72 bg-[#1e2336] text-slate-300 flex flex-col shadow-2xl z-50 transition-transform max-md:fixed max-md:inset-y-0 max-md:left-0 ${isMobileMenuOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}`}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setRoute('home')}>
             <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-600/30 font-black text-white text-lg">RF</div>
@@ -148,7 +151,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
           {navItems.map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm
                 ${activeTab === item.id 
                   ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' 
@@ -191,10 +194,13 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0 shadow-sm z-10">
-          <div className="flex items-center gap-4 text-sm font-medium text-slate-500">
-            <span className="text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg">Admin</span>
-            <svg className="w-4 h-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+        <header className="h-20 bg-white border-b border-slate-200 px-4 md:px-8 flex items-center justify-between shrink-0 shadow-sm z-10">
+          <div className="flex items-center gap-2 md:gap-4 text-sm font-medium text-slate-500">
+            <button className="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+            <span className="text-indigo-600 bg-indigo-50 px-3 py-1.5 rounded-lg hidden sm:block">Admin</span>
+            <svg className="w-4 h-4 text-slate-300 hidden sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             <span className="text-slate-800 capitalize font-bold">{navItems.find(i => i.id === activeTab)?.label}</span>
           </div>
           
