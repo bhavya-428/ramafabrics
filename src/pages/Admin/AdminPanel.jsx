@@ -154,8 +154,8 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
               onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm
                 ${activeTab === item.id 
-                  ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/20' 
-                  : 'hover:bg-slate-800/50 hover:text-slate-100'}
+                  ? 'bg-rose-700 text-white shadow-md shadow-rose-900/20' 
+                  : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-100'}
               `}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,7 +181,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
         <div className="p-4 border-t border-slate-700/50">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-rose-500/10 hover:text-rose-400 transition-colors text-sm font-medium"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 transition-colors text-sm font-medium"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

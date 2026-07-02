@@ -16,7 +16,7 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % heroBanners.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev === 0 ? heroBanners.length - 1 : prev - 1));
 
-  const featuredProducts = products.filter(p => p.isFeatured || p.rating >= 4.7).slice(0, 4);
+  const featuredProducts = products.filter(p => !p.isOfferItem && (p.isFeatured || p.rating >= 4.7)).slice(0, 4);
 
   const handleCategoryClick = (category) => {
     setCategoryFilter(category);

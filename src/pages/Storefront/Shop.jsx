@@ -12,6 +12,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
 
   // Filter products
   const filteredProducts = products.filter(product => {
+    const isRegularProduct = !product.isOfferItem;
     const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           product.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           product.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -19,7 +20,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
     const matchesCategory = categoryFilter === 'All' || product.category === categoryFilter;
     const matchesStock = !inStockOnly || product.stock > 0;
 
-    return matchesSearch && matchesCategory && matchesStock;
+    return isRegularProduct && matchesSearch && matchesCategory && matchesStock;
   });
 
   // Sort products

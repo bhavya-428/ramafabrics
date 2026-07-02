@@ -3,10 +3,10 @@
 
 :root {
   /* Color System */
-  --color-primary: #7D1D2B;      /* Crimson/Maroon (matching Logo text) */
-  --color-primary-light: #9E2D3E;
-  --color-primary-dark: #58101A;
-  --color-secondary: #94A3B8;    /* Silver/Grey (matching Logo background) */
+  --color-primary: #1F2937;      /* Simple Dark Slate/Charcoal */
+  --color-primary-light: #374151;
+  --color-primary-dark: #111827;
+  --color-secondary: #94A3B8;    /* Silver/Grey */
   --color-secondary-light: #CBD5E1;
   --color-secondary-dark: #475569;
   --color-accent: #0F172A;       /* Deep Slate */
@@ -34,10 +34,10 @@
   --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   /* Shadow Levels */
-  --shadow-sm: 0 2px 4px rgba(125, 29, 43, 0.04);
-  --shadow-md: 0 4px 12px rgba(125, 29, 43, 0.08);
-  --shadow-lg: 0 12px 24px rgba(125, 29, 43, 0.12);
-  --shadow-glow: 0 0 15px rgba(197, 160, 89, 0.2);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 15px rgba(0, 0, 0, 0.1);
 
   /* Border Radius */
   --radius-sm: 4px;

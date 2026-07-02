@@ -88,7 +88,7 @@ export const CouponsManagement = ({ showToast }) => {
   };
 
   const handleDeleteClick = (id, code) => {
-    if (window.confirm(`Are you sure you want to delete promo coupon "${code}"?`)) {
+    if (window.confirm(`Are you sure you want to delete coupon "${code}"?`)) {
       deleteOffer(id);
       showToast(`Coupon ${code} removed`, 'success');
     }
@@ -100,7 +100,7 @@ export const CouponsManagement = ({ showToast }) => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Coupons & Offers</h2>
-          <p className="text-sm text-slate-500 mt-1">Manage e-commerce promotional discount codes and order requirements.</p>
+          <p className="text-sm text-slate-500 mt-1">Manage e-commerce discount coupons and order requirements.</p>
         </div>
         <button
           onClick={() => {
@@ -112,7 +112,7 @@ export const CouponsManagement = ({ showToast }) => {
           className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg shadow-indigo-100"
         >
           <Icons.PlusIcon className="w-5 h-5" />
-          <span>Create Promo Coupon</span>
+          <span>Create Coupon</span>
         </button>
       </div>
 
@@ -188,7 +188,7 @@ export const CouponsManagement = ({ showToast }) => {
           ) : (
             <div className="p-16 text-center">
               <span className="text-3xl">🏷️</span>
-              <p className="text-slate-400 text-sm mt-3">No promo coupons created yet.</p>
+              <p className="text-slate-400 text-sm mt-3">No coupons created yet.</p>
             </div>
           )}
         </div>
@@ -200,7 +200,7 @@ export const CouponsManagement = ({ showToast }) => {
           <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-100 animate-scale-up overflow-hidden flex flex-col">
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
               <h3 className="font-bold text-slate-900 text-base">
-                {editingCoupon ? 'Modify Discount Offer' : 'Create Promotional Coupon'}
+                {editingCoupon ? 'Modify Discount Offer' : 'Create Coupon'}
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}

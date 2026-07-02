@@ -756,7 +756,7 @@ export const ShopProvider = ({ children }) => {
 ${itemsText}
 ----------------------------------------
 *Subtotal:* ₹${order.subtotal}
-*Discount:* ₹${order.discount} ${order.couponApplied ? `(Promo: ${order.couponApplied})` : ''}
+*Discount:* ₹${order.discount} ${order.couponApplied ? `(Coupon: ${order.couponApplied})` : ''}
 *Total Paid:* ₹${order.total}
 *Payment Method:* UPI QR
 ----------------------------------------

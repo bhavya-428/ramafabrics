@@ -166,7 +166,7 @@ export const Cart = ({ setRoute }) => {
             <form onSubmit={handleApplyPromo} style={styles.promoForm}>
               <input
                 type="text"
-                placeholder="PROMO CODE"
+                placeholder="COUPON"
                 value={promoCode}
                 onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
                 className="form-input"

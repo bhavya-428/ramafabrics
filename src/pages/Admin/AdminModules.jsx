@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ShopContext } from '../../context/ShopContext';
 
 export const CustomersTab = () => {
@@ -159,9 +160,10 @@ export const ProductManagementTab = () => {
   const initialForm = { name: '', category: categories[0]?.name || '', stock: 0, price: '', originalPrice: '', description: '', image: '' };
   const [productForm, setProductForm] = useState(initialForm);
 
-  const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
-  const lowStockProducts = products.filter(p => p.stock <= 5 && p.stock > 0);
-  const outOfStockProducts = products.filter(p => p.stock === 0);
+  const regularProducts = products.filter(p => !p.isOfferItem);
+  const totalStock = regularProducts.reduce((sum, p) => sum + p.stock, 0);
+  const lowStockProducts = regularProducts.filter(p => p.stock <= 5 && p.stock > 0);
+  const outOfStockProducts = regularProducts.filter(p => p.stock === 0);
 
   const handleEdit = (p) => {
     setEditingProduct(p);
@@ -242,7 +244,7 @@ export const ProductManagementTab = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Total Products</p>
-          <p className="text-3xl font-bold text-slate-800 mt-2">{products.length}</p>
+          <p className="text-3xl font-bold text-slate-800 mt-2">{regularProducts.length}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
           <p className="text-sm font-medium text-slate-500">Total Stock (Meters)</p>
@@ -279,7 +281,7 @@ export const ProductManagementTab = () => {
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {products.map((p) => (
+                  {regularProducts.map((p) => (
                     <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50/50">
                       <td className="py-4 flex items-center gap-3">
                         <img src={p.image} alt={p.name} className="w-10 h-10 rounded object-cover border border-slate-200" />
@@ -722,9 +724,9 @@ export const OffersTab = () => {
       )}
 
       {/* Create New Offer Item Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
+      {showModal && createPortal(
+        <div className="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-[100] flex items-start justify-center p-4 pt-12 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8 shrink-0 p-8">
             <h3 className="text-2xl font-bold text-slate-800 mb-6">Create New Offer Item</h3>
             <form onSubmit={submitForm} className="space-y-4">
               <div>
@@ -783,7 +785,8 @@ export const OffersTab = () => {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
