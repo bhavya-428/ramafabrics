@@ -2,18 +2,10 @@ import React, { useContext } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const NewArrivals = ({ setRoute, setSelectedProductId }) => {
-  const { products, addToCart, cart, updateCartQty } = useContext(ShopContext);
-
-  const newArrivals = products.filter(p => p.isNew).slice(0, 12);
-  
-  if (newArrivals.length === 0) {
-    // Fallback if no isNew flag
-    newArrivals.push(...products.slice(0, 12));
-  }
+  const { newArrivals, addToCart, cart, updateCartQty } = useContext(ShopContext);
 
   const handleViewProduct = (id) => {
     setSelectedProductId(id);
-    setRoute('product-detail');
   };
 
   return (
@@ -26,17 +18,16 @@ export const NewArrivals = ({ setRoute, setSelectedProductId }) => {
 
       <div className="grid grid-4 gap-3">
         {newArrivals.map((product) => (
-          <div key={product.id} className="luxury-card" style={styles.productCard}>
+          <div key={product.id} className="luxury-card" style={{...styles.productCard, cursor: 'pointer'}} onClick={() => handleViewProduct(product.id)}>
             <div 
               style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }}
-              onClick={() => handleViewProduct(product.id)}
             >
               <span style={styles.newBadge}>NEW</span>
             </div>
             
             <div style={styles.productInfo}>
               <span style={styles.productCat}>{product.category}</span>
-              <h3 style={styles.productName} onClick={() => handleViewProduct(product.id)}>
+              <h3 style={styles.productName}>
                 {product.name}
               </h3>
               <div style={styles.priceRow}>
@@ -45,17 +36,17 @@ export const NewArrivals = ({ setRoute, setSelectedProductId }) => {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
                     <button 
                       style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                      onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                      onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1); }}
                     >-</button>
                     <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
                     <button 
                       style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                      onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                      onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1); }}
                     >+</button>
                   </div>
                 ) : (
                   <button 
-                    onClick={() => addToCart(product, 1)}
+                    onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
                     className="btn btn-primary btn-sm"
                   >
                     + Add

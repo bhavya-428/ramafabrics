@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Orders = ({ setRoute, selectedOrderId, setSelectedProductId }) => {
-  const { orders, currentUser, getWhatsAppLink } = useContext(ShopContext);
+  const { orders, currentUser, getWhatsAppLink, updateOrderStatus } = useContext(ShopContext);
   const [searchOrderId, setSearchOrderId] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [searchError, setSearchError] = useState('');
@@ -29,16 +29,25 @@ export const Orders = ({ setRoute, selectedOrderId, setSelectedProductId }) => {
 
   const handleViewProduct = (productId) => {
     setSelectedProductId(productId);
-    setRoute('product-detail');
+  };
+
+  const handleCancelOrder = (orderId) => {
+    if (window.confirm('Are you sure you want to cancel this order? This action cannot be undone.')) {
+      updateOrderStatus(orderId, 'Cancelled');
+      if (searchResult && searchResult.id === orderId) {
+        setSearchResult(prev => ({ ...prev, status: 'Cancelled' }));
+      }
+    }
   };
 
   // Status mapping to percentages/classes for visual tracking timeline
   const getStatusStep = (status) => {
-    const statuses = ['Pending Payment', 'Paid', 'Confirmed', 'Shipped', 'Delivered'];
+    const statuses = ['Pending Payment', 'Paid', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'];
     return statuses.indexOf(status);
   };
 
   const renderTimeline = (status) => {
+    if (status === 'Cancelled') return <div style={styles.cancelledLabel}>Order Cancelled</div>;
     const activeStep = getStatusStep(status);
     const steps = ['Order Placed', 'Payment Received', 'Confirmed', 'Shipped', 'Delivered'];
 
@@ -100,7 +109,8 @@ export const Orders = ({ setRoute, selectedOrderId, setSelectedProductId }) => {
             order.status === 'Delivered' ? 'badge-success' : 
             order.status === 'Shipped' ? 'badge-info' : 
             order.status === 'Confirmed' ? 'badge-primary' : 
-            order.status === 'Paid' ? 'badge-warning' : 'badge-danger'
+            order.status === 'Paid' ? 'badge-warning' : 
+            order.status === 'Cancelled' ? 'badge-secondary' : 'badge-danger'
           }`}>
             {order.status}
           </span>
@@ -159,7 +169,7 @@ export const Orders = ({ setRoute, selectedOrderId, setSelectedProductId }) => {
             </div>
             {order.status === 'Pending Payment' && (
               <button 
-                onClick={() => { setSelectedOrderId(order.id); setRoute('payment'); }} 
+                onClick={() => { setSelectedOrderId(order.id); }} 
                 className="btn btn-gold btn-sm"
                 style={styles.payBtn}
               >
@@ -175,6 +185,15 @@ export const Orders = ({ setRoute, selectedOrderId, setSelectedProductId }) => {
               >
                 Resend WhatsApp Notice
               </a>
+            )}
+            {['Pending Payment', 'Paid', 'Confirmed'].includes(order.status) && (
+              <button 
+                onClick={() => handleCancelOrder(order.id)}
+                className="btn btn-sm"
+                style={{ ...styles.payBtn, backgroundColor: '#fef2f2', color: '#ef4444', borderColor: '#fca5a5', marginTop: '8px' }}
+              >
+                Cancel Order
+              </button>
             )}
           </div>
         </div>

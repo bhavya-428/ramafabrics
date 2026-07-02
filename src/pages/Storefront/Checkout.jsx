@@ -69,8 +69,6 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
 
     const newOrder = placeOrder(orderData, paymentMethod, finalTotal);
     setSelectedOrderId(newOrder.id);
-
-    setRoute('payment');
   };
 
   if (cart.length === 0) {

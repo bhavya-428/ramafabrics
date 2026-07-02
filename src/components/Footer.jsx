@@ -30,17 +30,20 @@ export const Footer = ({ setRoute }) => {
             <li><a href="#home" onClick={(e) => handleNav('', e)} style={styles.link}>Home</a></li>
             <li><a href="#shop" onClick={(e) => handleNav('shop', e)} style={styles.link}>Shop Fabrics</a></li>
             <li><a href="#offers" onClick={(e) => handleNav('offers', e)} style={styles.link}>Discounts & Offers</a></li>
+            <li><a href="#about" onClick={(e) => handleNav('about', e)} style={styles.link}>About Us</a></li>
             <li><a href="#contact" onClick={(e) => handleNav('contact', e)} style={styles.link}>Contact Us</a></li>
           </ul>
         </div>
 
-        {/* Customer area column */}
+        {/* Support & Policies column */}
         <div style={styles.column}>
-          <h4 style={styles.heading}>Customer Portal</h4>
+          <h4 style={styles.heading}>Support & Policies</h4>
           <ul style={styles.linkList}>
-            <li><a href="#orders" onClick={(e) => handleNav('orders', e)} style={styles.link}>Track Orders</a></li>
-            <li><a href="#cart" onClick={(e) => handleNav('cart', e)} style={styles.link}>Shopping Cart</a></li>
-            <li><a href="#login" onClick={(e) => handleNav('login', e)} style={styles.link}>Sign In / Sign Up</a></li>
+            <li><a href="#faq" onClick={(e) => handleNav('faq', e)} style={styles.link}>FAQs</a></li>
+            <li><a href="#shipping" onClick={(e) => handleNav('shipping', e)} style={styles.link}>Shipping Policy</a></li>
+            <li><a href="#refund" onClick={(e) => handleNav('refund', e)} style={styles.link}>Refund Policy</a></li>
+            <li><a href="#privacy" onClick={(e) => handleNav('privacy', e)} style={styles.link}>Privacy Policy</a></li>
+            <li><a href="#terms" onClick={(e) => handleNav('terms', e)} style={styles.link}>Terms & Conditions</a></li>
           </ul>
         </div>
 

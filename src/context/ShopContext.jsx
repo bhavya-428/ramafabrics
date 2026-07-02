@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 
 export const ShopContext = createContext();
 
@@ -107,6 +107,35 @@ const generateProducts = () => {
     });
   }
   
+  results.push(
+    {
+      id: 'spotlight1',
+      name: 'Midnight Velvet Elegance',
+      category: 'Velvet',
+      price: 1850,
+      originalPrice: 2200,
+      stock: 12,
+      description: 'Experience the soft touch of our premium micro velvet. Handcrafted for elegance and luxury.',
+      colorPattern: 'linear-gradient(135deg, #2F4F4F 0%, #000000 100%)',
+      image: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?auto=format&fit=crop&w=800&q=80',
+      rating: 4.9,
+      isFeatured: true
+    },
+    {
+      id: 'spotlight2',
+      name: 'Banarasi Silk Heritage',
+      category: 'Silk',
+      price: 3400,
+      originalPrice: 4000,
+      stock: 5,
+      description: 'Handwoven pure silk that defines royal luxury. A masterpiece of Banarasi weaving tradition.',
+      colorPattern: 'linear-gradient(135deg, #800020 0%, #D4AF37 100%)',
+      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
+      rating: 5.0,
+      isFeatured: true
+    }
+  );
+
   return results;
 };
 
@@ -136,6 +165,37 @@ const initialOffers = [
     type: 'flat',
     minPurchase: 0,
     description: 'Flat ₹50 OFF for all new users! No minimum purchase required.'
+  }
+];
+
+const initialHeroBanners = [
+  {
+    id: 'hb1',
+    image: 'https://bridalandtuxedogalleria.com/wp-content/uploads/2026/02/bridal-dress-1024x683.jpg',
+    tag: 'PREMIUM COLLECTION',
+    title: 'WEDDING FABRICS',
+    subtitle: 'Exclusive fabrics for your special moments'
+  },
+  {
+    id: 'hb2',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSL41P5M0MtQ7Rfnhy9cmjOxWNgMT2Lh_QHS1YFjInsZ3qbrYgVl1a7bWPi&s=10',
+    tag: 'NEW ARRIVALS',
+    title: 'PURE SILK ELEGANCE',
+    subtitle: 'Discover our latest Banarasi collection'
+  },
+  {
+    id: 'hb3',
+    image: 'https://image.made-in-china.com/203f0j00efrowRqgLAkO/Breathable-Cotton-High-Quality-Shirt-Fabric.webp',
+    tag: 'SUMMER ESSENTIALS',
+    title: 'BREATHABLE COTTONS',
+    subtitle: 'Stay cool with our handblock prints'
+  },
+  {
+    id: 'hb4',
+    image: 'https://saroj.in/cdn/shop/files/WhatsAppImage2023-05-08at12.02.37PM.jpg?v=1774244198',
+    tag: 'DESIGNER CHOICE',
+    title: 'FLORAL ORGANZA',
+    subtitle: 'Perfect for contemporary drapes'
   }
 ];
 
@@ -184,6 +244,11 @@ export const ShopProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : initialOffers;
   });
 
+  const [heroBanners, setHeroBanners] = useState(() => {
+    const saved = localStorage.getItem('rf_hero_banners');
+    return saved ? JSON.parse(saved) : initialHeroBanners;
+  });
+
   const [settings, setSettings] = useState(() => {
     const saved = localStorage.getItem('rf_settings');
     if (saved) {
@@ -200,7 +265,22 @@ export const ShopProvider = ({ children }) => {
 
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem('rf_orders');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) {
+      let parsed = JSON.parse(saved);
+      // Migration: Add statusHistory to older orders
+      parsed = parsed.map(o => {
+        if (!o.statusHistory) {
+          const history = [{ status: 'Pending Payment', timestamp: o.createdAt }];
+          if (o.status !== 'Pending Payment') {
+             history.push({ status: o.status, timestamp: o.createdAt });
+          }
+          return { ...o, statusHistory: history };
+        }
+        return o;
+      });
+      return parsed;
+    }
+    return [];
   });
 
   const [users, setUsers] = useState(() => {
@@ -221,6 +301,32 @@ export const ShopProvider = ({ children }) => {
   const [reviews, setReviews] = useState(() => {
     const saved = localStorage.getItem('rf_reviews');
     return saved ? JSON.parse(saved) : []; // Array of { id, productId, orderId, userId, userName, rating, comment, date }
+  });
+
+  const [pages, setPages] = useState(() => {
+    const saved = localStorage.getItem('rf_pages');
+    return saved ? JSON.parse(saved) : {
+      about: { title: 'About Us', content: 'Welcome to Rama Fabrics. We bring the finest handloom textiles straight from the weavers to you.' },
+      privacy: { title: 'Privacy Policy', content: 'Your privacy is important to us. We do not share your data.' },
+      refund: { title: 'Refund Policy', content: 'We offer a 7-day return policy for unused fabrics.' },
+      terms: { title: 'Terms & Conditions', content: 'By using this site, you agree to our terms of service.' },
+      shipping: { title: 'Shipping Policy', content: 'Orders are shipped within 2-3 business days.' }
+    };
+  });
+
+  const [faqs, setFaqs] = useState(() => {
+    const saved = localStorage.getItem('rf_faqs');
+    return saved ? JSON.parse(saved) : [
+      { id: 'f1', question: 'Do you offer international shipping?', answer: 'Currently, we only ship within India.' },
+      { id: 'f2', question: 'How can I track my order?', answer: 'Once your order is shipped, you will receive a tracking link via WhatsApp/Email.' }
+    ];
+  });
+
+  const [announcements, setAnnouncements] = useState(() => {
+    const saved = localStorage.getItem('rf_announcements');
+    return saved ? JSON.parse(saved) : [
+      { id: 'a1', text: 'Free shipping on orders over ₹2000!', enabled: true }
+    ];
   });
 
   // Client Session States
@@ -264,8 +370,24 @@ export const ShopProvider = ({ children }) => {
   }, [offers]);
 
   useEffect(() => {
+    localStorage.setItem('rf_hero_banners', JSON.stringify(heroBanners));
+  }, [heroBanners]);
+
+  useEffect(() => {
     localStorage.setItem('rf_settings', JSON.stringify(settings));
   }, [settings]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_pages', JSON.stringify(pages));
+  }, [pages]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_faqs', JSON.stringify(faqs));
+  }, [faqs]);
+
+  useEffect(() => {
+    localStorage.setItem('rf_announcements', JSON.stringify(announcements));
+  }, [announcements]);
 
   useEffect(() => {
     localStorage.setItem('rf_orders', JSON.stringify(orders));
@@ -417,6 +539,7 @@ export const ShopProvider = ({ children }) => {
       total,
       couponApplied: activeCoupon ? activeCoupon.code : null,
       status: 'Pending Payment',
+      statusHistory: [{ status: 'Pending Payment', timestamp: new Date().toISOString() }],
       createdAt: new Date().toISOString(),
       userEmail: currentUser ? currentUser.email : shippingInfo.email
     };
@@ -532,10 +655,13 @@ export const ShopProvider = ({ children }) => {
     setOrders(prev => prev.map(order => {
       if (order.id === orderId) {
         if ((newStatus === 'Cancelled' || newStatus === 'Rejected') && 
-            order.status !== 'Cancelled' && order.status !== 'Rejected') {
+            order.status !== 'Cancelled' && order.status !== 'Rejected' &&
+            order.status !== 'Shipped' && order.status !== 'Delivered') {
            orderToCancel = order;
         }
-        return { ...order, status: newStatus };
+        const history = order.statusHistory ? [...order.statusHistory] : [];
+        history.push({ status: newStatus, timestamp: new Date().toISOString() });
+        return { ...order, status: newStatus, statusHistory: history };
       }
       return order;
     }));
@@ -639,6 +765,28 @@ _I have completed the payment via UPI. Please confirm my order!_`;
     const encodedText = encodeURIComponent(message);
     return `https://wa.me/${settings.whatsapp}?text=${encodedText}`;
   };
+  // --- Dynamic Computed Properties ---
+  const newArrivals = useMemo(() => {
+    // Top 12 latest products (assuming array order or we can just reverse)
+    return [...products].reverse().slice(0, 12);
+  }, [products]);
+
+  const bestSellers = useMemo(() => {
+    const salesCount = {};
+    orders.forEach(order => {
+      if (order.status !== 'Cancelled' && order.status !== 'Pending Payment') {
+        order.items.forEach(item => {
+          if (!salesCount[item.product.id]) salesCount[item.product.id] = 0;
+          salesCount[item.product.id] += item.quantity;
+        });
+      }
+    });
+
+    return [...products]
+      .map(p => ({ ...p, unitsSold: salesCount[p.id] || 0 }))
+      .sort((a, b) => b.unitsSold - a.unitsSold)
+      .slice(0, 12);
+  }, [products, orders]);
 
   return (
     <ShopContext.Provider
@@ -646,9 +794,20 @@ _I have completed the payment via UPI. Please confirm my order!_`;
         searchQuery,
         setSearchQuery,
         products,
+        newArrivals,
+        bestSellers,
         offers,
+        heroBanners,
+        setHeroBanners,
         orders,
         settings,
+        setSettings,
+        pages,
+        setPages,
+        faqs,
+        setFaqs,
+        announcements,
+        setAnnouncements,
         currentUser,
         cart,
         wishlist,

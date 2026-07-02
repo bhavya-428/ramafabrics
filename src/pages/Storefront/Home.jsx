@@ -2,35 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { ShopContext } from '../../context/ShopContext';
 
 export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
-  const { products, addToCart, cart, updateCartQty } = useContext(ShopContext);
+  const { products, addToCart, cart, updateCartQty, heroBanners } = useContext(ShopContext);
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const heroBanners = [
-    {
-      image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=1600&q=80',
-      tag: 'PREMIUM COLLECTION',
-      title: 'WEDDING FABRICS',
-      subtitle: 'Exclusive fabrics for your special moments'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1600&q=80',
-      tag: 'NEW ARRIVALS',
-      title: 'PURE SILK ELEGANCE',
-      subtitle: 'Discover our latest Banarasi collection'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=1600&q=80',
-      tag: 'SUMMER ESSENTIALS',
-      title: 'BREATHABLE COTTONS',
-      subtitle: 'Stay cool with our handblock prints'
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?auto=format&fit=crop&w=1600&q=80',
-      tag: 'DESIGNER CHOICE',
-      title: 'FLORAL ORGANZA',
-      subtitle: 'Perfect for contemporary drapes'
-    }
-  ];
 
   // Auto slide every 5 seconds
   useEffect(() => {
@@ -52,32 +25,31 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
 
   const handleViewProduct = (id) => {
     setSelectedProductId(id);
-    setRoute('product-detail');
   };
 
   const categories = [
-    { name: 'Cotton', img: 'https://images.unsplash.com/photo-1606744824163-985d376605aa?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Silk', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Linen', img: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Rayon', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Muslin', img: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Organza', img: 'https://images.unsplash.com/photo-1588854337236-6889d631faa8?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Chiffon', img: 'https://images.unsplash.com/photo-1543087903-1ac2ec7aa8c5?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Velvet', img: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Embroidery', img: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Printed Fabrics', img: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=200&q=80' },
-    { name: 'Dress Materials', img: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=200&q=80' }
+    { name: 'Cotton', img: 'https://4.imimg.com/data4/GA/RI/MY-27997219/cotton-fabric.jpg' },
+    { name: 'Silk', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxF4mZjvZhZkuUdrzLmDh2PfpUM8M3D8W13Hvworpa1OX69LaXv35A4Gvi&s=10' },
+    { name: 'Linen', img: 'https://fabricshreeom.com/cdn/shop/files/PureLinen.jpg?v=1746276619' },
+    { name: 'Rayon', img: 'https://www.tradeuno.com/cdn/shop/products/PinkPolkaDotsPrintRayonFabric_1.jpg?v=1755693935&width=1946' },
+    { name: 'Muslin', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThl5jffZGyYUeeNmLiCO8-LX9_HGAJIQkagNMFjM2HEXOKJpAyWPOS5Jce&s=10' },
+    { name: 'Organza', img: 'https://akrithi.com/cdn/shop/collections/IMG_8641_1.jpg?v=1591716643'},
+    { name: 'Chiffon', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3dMHeVW1P8kLQAjtsmFR6JnyYg-LVhTzbVH_dXOMDID-w9apA3cUeumI&s=10' },
+    { name: 'Velvet', img: 'https://mmcdn.onlinefabricstore.com/wp-content/uploads/2017/03/IMG_0286-edit.jpg' },
+    { name: 'Embroidery', img: 'https://www.tradeuno.com/cdn/shop/files/IMG_E9604_8fdffa25-d443-4c70-b4d0-75140b29a8d6.jpg?v=1755798568&width=1108' },
+    { name: 'Printed Fabrics', img: 'https://akrithi.com/cdn/shop/files/IMG_8134.jpg?v=1722780291&width=2000' },
+    { name: 'Dress Materials', img: 'https://www.royalexport.in/product-img/elegant-simmer-silk-dress-mate-1734689863.jpg' }
   ];
 
   const premiumSpotlight = [
     {
-      id: 'p12',
+      id: 'spotlight1',
       title: 'Midnight Velvet Elegance',
       subtitle: 'Experience the soft touch of our premium micro velvet.',
       image: 'https://images.unsplash.com/photo-1621600411688-4be93cd68504?auto=format&fit=crop&w=800&q=80',
     },
     {
-      id: 'p15',
+      id: 'spotlight2',
       title: 'Banarasi Silk Heritage',
       subtitle: 'Handwoven pure silk that defines royal luxury.',
       image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=800&q=80',
@@ -188,18 +160,15 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
           {featuredProducts.concat(featuredProducts[0] || []).slice(0, 5).map((product, idx) => {
             const badge = getBadgeStyle(idx);
             return (
-              <div key={idx} style={styles.productCard}>
-                <div style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }} onClick={() => handleViewProduct(product.id)}>
+              <div key={idx} style={{...styles.productCard, cursor: 'pointer'}} onClick={() => handleViewProduct(product.id)}>
+                <div style={{ ...styles.productImage, backgroundImage: `url(${product.image})` }}>
                   <span style={{ ...styles.productBadge, backgroundColor: badge.bg }}>{badge.text}</span>
                   <div style={styles.wishlistBtn}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   </div>
                 </div>
                 <div style={styles.productInfo}>
-                  <h3 
-                    style={{...styles.productName, cursor: 'pointer'}}
-                    onClick={() => handleViewProduct(product.id)}
-                  >
+                  <h3 style={styles.productName}>
                     {product.name}
                   </h3>
                   <span style={styles.productCat}>{product.category}</span>
@@ -213,24 +182,24 @@ export const Home = ({ setRoute, setCategoryFilter, setSelectedProductId }) => {
                       </div>
                       <div style={styles.ratingRow}>
                         <span style={styles.stars}>★★★★★</span>
-                        <span style={styles.reviewCount}>({Math.floor(Math.random() * 100) + 20})</span>
+                        <span style={styles.reviewCount}>({(product.id.charCodeAt(product.id.length-1) * 3) % 100 + 40})</span>
                       </div>
                     </div>
                     {cart.find(c => c.product.id === product.id) ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
                         <button 
                           style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                          onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                          onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1); }}
                         >-</button>
                         <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
                         <button 
                           style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                          onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                          onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1); }}
                         >+</button>
                       </div>
                     ) : (
                       <button 
-                        onClick={() => addToCart(product, 1)}
+                        onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
                         className="btn btn-primary btn-sm"
                       >
                         + Add

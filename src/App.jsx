@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ShopProvider } from './context/ShopContext';
+import React, { useState, useEffect, useContext } from 'react';
+import { ShopProvider, ShopContext } from './context/ShopContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 
@@ -20,6 +20,8 @@ import { About } from './pages/Storefront/About';
 import { NewArrivals } from './pages/Storefront/NewArrivals';
 import { BestSellers } from './pages/Storefront/BestSellers';
 import { AdminPanel } from './pages/Admin/AdminPanel';
+import { StaticPage } from './pages/Storefront/StaticPage';
+import { FAQ } from './pages/Storefront/FAQ';
 
 function AppContent() {
   const [route, setRoute] = useState('');
@@ -135,7 +137,17 @@ function AppContent() {
       case 'profile':
         return <Profile setRoute={handleSetRoute} />;
       case 'about':
-        return <About setRoute={handleSetRoute} />;
+        return <StaticPage pageKey="about" />;
+      case 'privacy':
+        return <StaticPage pageKey="privacy" />;
+      case 'refund':
+        return <StaticPage pageKey="refund" />;
+      case 'terms':
+        return <StaticPage pageKey="terms" />;
+      case 'shipping':
+        return <StaticPage pageKey="shipping" />;
+      case 'faq':
+        return <FAQ />;
       case 'new-arrivals':
         return <NewArrivals setRoute={handleSetRoute} setSelectedProductId={handleSelectProductId} />;
       case 'best-sellers':
@@ -162,9 +174,16 @@ function AppContent() {
 
   // Do not render default customer Layout (Navbar/Footer) inside Admin screen
   const isAdminView = route === 'admin';
+  const { announcements } = useContext(ShopContext) || { announcements: [] };
+  const activeAnnouncements = announcements?.filter(a => a.enabled) || [];
 
   return (
     <div style={styles.appWrapper}>
+      {!isAdminView && activeAnnouncements.map(announcement => (
+        <div key={announcement.id} className="bg-[#8b1818] text-white text-center py-2 px-4 text-sm font-medium tracking-wide">
+          {announcement.text}
+        </div>
+      ))}
       {!isAdminView && <Navbar currentPath={route} setRoute={handleSetRoute} />}
       <main style={styles.mainWrapper}>
         {renderPage()}

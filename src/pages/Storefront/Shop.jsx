@@ -8,7 +8,6 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
 
   const handleViewProduct = (id) => {
     setSelectedProductId(id);
-    setRoute('product-detail');
   };
 
   // Filter products
@@ -121,11 +120,10 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
           {sortedProducts.length > 0 ? (
             <div className="grid grid-3 gap-2">
               {sortedProducts.map((product) => (
-                <div key={product.id} className="luxury-card" style={styles.productCard}>
+                <div key={product.id} className="luxury-card" style={{...styles.productCard, cursor: 'pointer'}} onClick={() => handleViewProduct(product.id)}>
                   {/* Swatch Image Mock */}
                   <div 
                     style={{ ...styles.productSwatch, backgroundImage: `url(${product.image})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
-                    onClick={() => handleViewProduct(product.id)}
                   >
                     {product.originalPrice && product.price < product.originalPrice && (
                       <span style={{ ...styles.lowStockBadge, backgroundColor: 'var(--color-accent)', right: '12px', left: 'auto' }}>
@@ -142,10 +140,7 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
                   
                   <div style={styles.productInfo}>
                     <span style={styles.productCat}>{product.category}</span>
-                    <h3 
-                      style={{...styles.productName, cursor: 'pointer'}}
-                      onClick={() => handleViewProduct(product.id)}
-                    >
+                    <h3 style={styles.productName}>
                       {product.name}
                     </h3>
                     <p style={styles.descTrunc}>{product.description.substring(0, 75)}...</p>
@@ -177,17 +172,17 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: '1px solid var(--color-primary)', borderRadius: '4px', overflow: 'hidden' }}>
                             <button 
                               style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                              onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1)}
+                              onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity - 1); }}
                             >-</button>
                             <span style={{fontWeight: '700', fontSize: '13px', color: 'var(--color-primary)', padding: '0 8px'}}>{cart.find(c => c.product.id === product.id).quantity}</span>
                             <button 
                               style={{...styles.qtyBtn, border: 'none', backgroundColor: '#f8fafc', color: 'var(--color-primary)'}} 
-                              onClick={() => updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1)}
+                              onClick={(e) => { e.stopPropagation(); updateCartQty(product.id, cart.find(c => c.product.id === product.id).quantity + 1); }}
                             >+</button>
                           </div>
                         ) : (
                           <button 
-                            onClick={() => addToCart(product, 1)}
+                            onClick={(e) => { e.stopPropagation(); addToCart(product, 1); }}
                             className="btn btn-primary btn-sm"
                           >
                             + Add

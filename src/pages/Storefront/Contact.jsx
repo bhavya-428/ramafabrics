@@ -13,8 +13,7 @@ export const Contact = () => {
     setTimeout(() => setSuccess(false), 4000);
   };
 
-  const specificAddress = "40-26/1-14, Brindavan Colony, Sriram Nagar, Vijayawada, Andhra Pradesh 520010";
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(specificAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(settings.storeAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
 
   return (
     <div className="container animate-fade-in" style={styles.contactContainer}>
