@@ -15,31 +15,24 @@ export const Contact = () => {
 
   const branches = [
     {
-      name: "Governerpet Branch (Main Hub)",
-      address: "29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, AP 520002",
+      name: "Governor Peta Branch",
+      address: "Seshadri, 29-1-1, Sheshadri Sastry St, Governor Peta, Vijayawada, Andhra Pradesh 520002",
       phone: settings.phone,
       hours: settings.hours,
-      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, AP 520002")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("Seshadri, 29-1-1, Sheshadri Sastry St, Governor Peta, Vijayawada, Andhra Pradesh 520002")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
     },
     {
       name: "Brindavan Colony Branch",
-      address: "40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, AP 520010",
+      address: "40-15-4, Nandamuri Rd, Brindavan Colony, Sriram Nagar, Vijayawada, Andhra Pradesh 520010",
       phone: settings.phone,
       hours: settings.hours,
-      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, AP 520010")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
-    },
-    {
-      name: "Labbipet / Bunder Road Branch",
-      address: "Located near Kataragada Pichaiah Street (YVR Hospital Lane), Vijayawada",
-      phone: settings.phone,
-      hours: settings.hours,
-      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("Kataragada Pichaiah Street, Labbipet, Vijayawada")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("40-15-4, Nandamuri Rd, Brindavan Colony, Sriram Nagar, Vijayawada, Andhra Pradesh 520010")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
     }
   ];
   return (
     <div className="container animate-fade-in" style={styles.contactContainer}>
       <div style={styles.header}>
-        <span style={styles.subTitle}>VISIT OUR BRINDAVAN COLONY SHOWROOM</span>
+        <span style={styles.subTitle}>VISIT OUR SHOWROOMS</span>
         <h1 style={styles.title}>Contact Rama Fabrics</h1>
       </div>
 

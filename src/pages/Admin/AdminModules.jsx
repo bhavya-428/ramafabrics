@@ -45,7 +45,6 @@ export const OrdersTab = () => {
   const confirmAction = () => {
     if (!confirmModal) return;
     updateOrderStatus(confirmModal.orderId, confirmModal.newStatus);
-    alert(`Success: Order #${confirmModal.orderId} marked as ${confirmModal.newStatus}.\nCustomer has been notified via Email/SMS!`);
     setConfirmModal(null);
   };
 

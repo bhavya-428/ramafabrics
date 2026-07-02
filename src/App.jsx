@@ -174,16 +174,9 @@ function AppContent() {
 
   // Do not render default customer Layout (Navbar/Footer) inside Admin screen
   const isAdminView = route === 'admin';
-  const { announcements } = useContext(ShopContext) || { announcements: [] };
-  const activeAnnouncements = announcements?.filter(a => a.enabled) || [];
 
   return (
     <div style={styles.appWrapper}>
-      {!isAdminView && activeAnnouncements.map(announcement => (
-        <div key={announcement.id} className="bg-[#8b1818] text-white text-center py-2 px-4 text-sm font-medium tracking-wide">
-          {announcement.text}
-        </div>
-      ))}
       {!isAdminView && <Navbar currentPath={route} setRoute={handleSetRoute} />}
       <main style={styles.mainWrapper}>
         {renderPage()}

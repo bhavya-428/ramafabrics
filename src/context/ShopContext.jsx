@@ -325,7 +325,6 @@ export const ShopProvider = ({ children }) => {
   const [announcements, setAnnouncements] = useState(() => {
     const saved = localStorage.getItem('rf_announcements');
     return saved ? JSON.parse(saved) : [
-      { id: 'a1', text: 'Free shipping on orders over ₹2000!', enabled: true }
     ];
   });
 

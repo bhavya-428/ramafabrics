@@ -20,15 +20,15 @@ export const Navbar = ({ currentPath, setRoute }) => {
 
   return (
     <header style={styles.header}>
-     
+
 
       {/* Main Header (Logo, Search, Icons) */}
       <div style={styles.mainHeader}>
         <div className="container flex align-center justify-between" style={{ height: '100%', gap: '40px' }}>
-          
+
           {/* Logo */}
           <a href="#home" onClick={(e) => handleNav('', e)} style={styles.logoContainer}>
-            <div style={styles.logoIcon}>R</div>
+            <img src="/logo.png" alt="Rama Fabrics" style={{ width: '56px', height: '56px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #C5A059' }} />
             <div style={styles.logoTextWrapper}>
               <span style={styles.logoTitle}>RAMA</span>
               <span style={styles.logoSubtitle}>FABRICS</span>
@@ -38,9 +38,9 @@ export const Navbar = ({ currentPath, setRoute }) => {
 
           {/* Search Bar */}
           <form style={styles.searchContainer} onSubmit={handleSearchSubmit}>
-            <input 
-              type="text" 
-              placeholder="Search by fabric name, material, color, category..." 
+            <input
+              type="text"
+              placeholder="Search by fabric name, material, color, category..."
               style={styles.searchInput}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -101,10 +101,10 @@ export const Navbar = ({ currentPath, setRoute }) => {
           ].map(item => {
             const isActive = item.paths.includes(currentPath);
             return (
-              <a 
+              <a
                 key={item.id}
-                href={`#${item.id}`} 
-                onClick={(e) => handleNav(item.id === 'home' ? '' : item.id, e)} 
+                href={`#${item.id}`}
+                onClick={(e) => handleNav(item.id === 'home' ? '' : item.id, e)}
                 style={{ ...styles.navLink, ...(isActive ? styles.activeNavLink : {}) }}
               >
                 {item.label}
@@ -276,9 +276,9 @@ const styles = {
     borderBottom: '2px solid transparent',
   },
   activeNavLink: {
-    color: '#6C1425',
+    color: 'var(--color-primary)',
     fontWeight: '600',
-    borderBottomColor: '#6C1425',
+    borderBottom: '2px solid var(--color-primary)',
   },
   dropdownArrow: {
     fontSize: '9px',

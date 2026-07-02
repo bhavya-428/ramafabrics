@@ -138,7 +138,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
       <div className={`w-72 bg-[#1e2336] text-slate-300 flex flex-col shadow-2xl z-50 transition-transform max-md:fixed max-md:inset-y-0 max-md:left-0 ${isMobileMenuOpen ? 'max-md:translate-x-0' : 'max-md:-translate-x-full'}`}>
         <div className="p-6 pb-2">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => setRoute('home')}>
-            <div className="w-10 h-10 bg-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-600/30 font-black text-white text-lg">RF</div>
+            <img src="/logo.png" alt="RF" className="w-11 h-11 rounded-full object-cover shadow-lg border-2 border-[#C5A059]" />
             <div>
               <h1 className="text-xl font-bold text-white tracking-wide">Rama</h1>
               <h1 className="text-xl font-bold text-white tracking-wide -mt-2">Fabrics</h1>
@@ -161,7 +161,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
               </svg>
-              {item.label}
+              <span className="flex-1 text-left whitespace-nowrap">{item.label}</span>
               
               {/* Badges */}
               {item.id === 'orders' && orders.filter(o => o.status === 'Pending Payment').length > 0 && (
