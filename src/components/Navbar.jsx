@@ -88,16 +88,29 @@ export const Navbar = ({ currentPath, setRoute }) => {
         </div>
       </div>
 
-      {/* Secondary Navigation */}
       <div style={styles.secondaryNav}>
         <div className="container" style={{ display: 'flex', gap: '32px' }}>
-          <a href="#home" onClick={(e) => handleNav('', e)} style={{ ...styles.navLink, ...((currentPath === '' || currentPath === 'home') ? styles.activeNavLink : {}) }}>Home</a>
-          <a href="#shop" onClick={(e) => handleNav('shop', e)} style={{ ...styles.navLink, ...(currentPath === 'shop' ? styles.activeNavLink : {}) }}>Our Fabrics</a>
-          <a href="#new-arrivals" onClick={(e) => handleNav('new-arrivals', e)} style={{ ...styles.navLink, ...(currentPath === 'new-arrivals' ? styles.activeNavLink : {}) }}>New Arrivals</a>
-          <a href="#best-sellers" onClick={(e) => handleNav('best-sellers', e)} style={{ ...styles.navLink, ...(currentPath === 'best-sellers' ? styles.activeNavLink : {}) }}>Best Sellers</a>
-          <a href="#offers" onClick={(e) => handleNav('offers', e)} style={{ ...styles.navLink, ...(currentPath === 'offers' ? styles.activeNavLink : {}) }}>Offers</a>
-          <a href="#about" onClick={(e) => handleNav('about', e)} style={{ ...styles.navLink, ...(currentPath === 'about' ? styles.activeNavLink : {}) }}>About Us</a>
-          <a href="#contact" onClick={(e) => handleNav('contact', e)} style={{ ...styles.navLink, ...(currentPath === 'contact' ? styles.activeNavLink : {}) }}>Contact Us</a>
+          {[
+            { id: 'home', label: 'Home', paths: ['', 'home'] },
+            { id: 'shop', label: 'Our Fabrics', paths: ['shop'] },
+            { id: 'new-arrivals', label: 'New Arrivals', paths: ['new-arrivals'] },
+            { id: 'best-sellers', label: 'Best Sellers', paths: ['best-sellers'] },
+            { id: 'offers', label: 'Offers', paths: ['offers'] },
+            { id: 'about', label: 'About Us', paths: ['about'] },
+            { id: 'contact', label: 'Contact Us', paths: ['contact'] },
+          ].map(item => {
+            const isActive = item.paths.includes(currentPath);
+            return (
+              <a 
+                key={item.id}
+                href={`#${item.id}`} 
+                onClick={(e) => handleNav(item.id === 'home' ? '' : item.id, e)} 
+                style={{ ...styles.navLink, ...(isActive ? styles.activeNavLink : {}) }}
+              >
+                {item.label}
+              </a>
+            );
+          })}
         </div>
       </div>
     </header>

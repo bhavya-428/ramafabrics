@@ -44,18 +44,6 @@ export const Shop = ({ setRoute, categoryFilter, setCategoryFilter, setSelectedP
         {/* SIDEBAR FILTERS */}
         <aside style={styles.sidebar}>
           <div style={styles.filterSection}>
-            <h3 style={styles.filterTitle}>Search Products</h3>
-            <input 
-              type="text" 
-              placeholder="Search silk, handloom..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="form-input"
-              style={styles.searchInput}
-            />
-          </div>
-
-          <div style={styles.filterSection}>
             <h3 style={styles.filterTitle}>Categories</h3>
             <div style={styles.categoryList}>
               {categories.map((cat) => (

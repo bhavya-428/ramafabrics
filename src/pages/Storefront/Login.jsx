@@ -67,7 +67,7 @@ export const Login = ({ setRoute }) => {
               <label className="form-label">Full Name</label>
               <input
                 type="text"
-                placeholder="Srinivas Rao"
+                placeholder="John Doe"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="form-input"
@@ -80,7 +80,7 @@ export const Login = ({ setRoute }) => {
             <label className="form-label">Email Address</label>
             <input
               type="email"
-              placeholder="srinivas@gmail.com"
+              placeholder="johndoe@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="form-input"

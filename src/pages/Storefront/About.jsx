@@ -52,23 +52,13 @@ export const About = () => {
           </div>
         </div>
 
-        {/* Content Section 3: Branches */}
-        <div style={{ marginTop: '80px', borderTop: '1px solid #e2e8f0', paddingTop: '60px' }}>
-          <h2 style={{ ...styles.sectionTitle, textAlign: 'center', marginBottom: '40px' }}>Visit Our Stores in Vijayawada</h2>
-          <div className="grid grid-3 gap-4">
-            <div style={styles.branchCard}>
-              <h3 style={styles.branchName}>Governerpet Branch (Main Hub)</h3>
-              <p style={styles.branchAddress}>29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, Andhra Pradesh 520002.</p>
-            </div>
-            <div style={styles.branchCard}>
-              <h3 style={styles.branchName}>Brindavan Colony Branch</h3>
-              <p style={styles.branchAddress}>40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, Andhra Pradesh 520010.</p>
-            </div>
-            <div style={styles.branchCard}>
-              <h3 style={styles.branchName}>Labbipet / Bunder Road Branch</h3>
-              <p style={styles.branchAddress}>Located near Kataragada Pichaiah Street (YVR Hospital Lane).</p>
-            </div>
-          </div>
+        {/* Modern Call to Action */}
+        <div style={{ marginTop: '80px', borderTop: '1px solid #e2e8f0', paddingTop: '60px', textAlign: 'center' }}>
+          <h2 style={{ ...styles.sectionTitle, marginBottom: '20px' }}>Experience Our Collection</h2>
+          <p style={{ ...styles.paragraph, maxWidth: '600px', margin: '0 auto 30px' }}>
+            Ready to find the perfect fabric for your next creation? Explore our online store or visit us in person to feel the quality for yourself.
+          </p>
+          <a href="#shop" className="btn btn-primary" style={{ padding: '12px 32px', fontSize: '16px' }}>Shop Now</a>
         </div>
       </div>
     </div>

@@ -81,7 +81,7 @@ export const AdminPanel = ({ setRoute, setSelectedProductId }) => {
               )}
               <div>
                 <label className="block text-sm font-medium text-slate-700">Email Address</label>
-                <input type="email" required value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="appearance-none rounded-md relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="admin@ramafabrics.com" />
+                <input type="email" required value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="appearance-none rounded-md relative block w-full px-3 py-2 border border-slate-300 placeholder-slate-500 text-slate-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="admin@example.com" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Password</label>

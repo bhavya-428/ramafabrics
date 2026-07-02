@@ -137,7 +137,7 @@ function AppContent() {
       case 'profile':
         return <Profile setRoute={handleSetRoute} />;
       case 'about':
-        return <StaticPage pageKey="about" />;
+        return <About />;
       case 'privacy':
         return <StaticPage pageKey="privacy" />;
       case 'refund':

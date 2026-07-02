@@ -70,7 +70,7 @@ export const AdminLogin = ({ showToast }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="appearance-none relative block w-full px-4 py-3 border border-slate-200 rounded-xl placeholder-slate-400 text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200"
-                placeholder="admin@ramafabrics.com"
+                placeholder="admin@example.com"
               />
             </div>
             <div>

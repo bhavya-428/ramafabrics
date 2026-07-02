@@ -104,7 +104,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Srinivas Rao"
+                placeholder="John Doe"
                 className="form-input"
                 required
               />
@@ -116,7 +116,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="srinivas@gmail.com"
+                placeholder="johndoe@example.com"
                 className="form-input"
                 required
               />
@@ -131,7 +131,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="96188 96169"
+                placeholder="12345 67890"
                 className="form-input"
                 required
               />
@@ -143,7 +143,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="whatsapp"
                 value={formData.whatsapp}
                 onChange={handleChange}
-                placeholder="919618896169"
+                placeholder="911234567890"
                 className="form-input"
                 required
               />
@@ -160,7 +160,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
               name="address"
               value={formData.address}
               onChange={handleChange}
-              placeholder="Door No, Building, Street, Brindavan Colony"
+              placeholder="123 Main St, Apartment 4B"
               className="form-input"
               style={{ minHeight: '80px', resize: 'vertical' }}
               required
@@ -175,7 +175,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                placeholder="Vijayawada"
+                placeholder="City Name"
                 className="form-input"
                 required
               />
@@ -187,7 +187,7 @@ export const Checkout = ({ setRoute, setSelectedOrderId }) => {
                 name="pincode"
                 value={formData.pincode}
                 onChange={handleChange}
-                placeholder="520010"
+                placeholder="123456"
                 className="form-input"
                 required
               />

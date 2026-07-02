@@ -13,8 +13,29 @@ export const Contact = () => {
     setTimeout(() => setSuccess(false), 4000);
   };
 
-  const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(settings.storeAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
-
+  const branches = [
+    {
+      name: "Governerpet Branch (Main Hub)",
+      address: "29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, AP 520002",
+      phone: settings.phone,
+      hours: settings.hours,
+      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("29-1-1, Beside Rama Rao Hall, Near Civil Courts, Andhra Hospital Road, Governerpet, Vijayawada, AP 520002")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+    },
+    {
+      name: "Brindavan Colony Branch",
+      address: "40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, AP 520010",
+      phone: settings.phone,
+      hours: settings.hours,
+      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("40-15-4, Nandamuri Road, Brindavan Colony, Benz Circle, Vijayawada, AP 520010")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+    },
+    {
+      name: "Labbipet / Bunder Road Branch",
+      address: "Located near Kataragada Pichaiah Street (YVR Hospital Lane), Vijayawada",
+      phone: settings.phone,
+      hours: settings.hours,
+      mapUrl: `https://maps.google.com/maps?q=${encodeURIComponent("Kataragada Pichaiah Street, Labbipet, Vijayawada")}&t=&z=15&ie=UTF8&iwloc=&output=embed`
+    }
+  ];
   return (
     <div className="container animate-fade-in" style={styles.contactContainer}>
       <div style={styles.header}>
@@ -22,47 +43,34 @@ export const Contact = () => {
         <h1 style={styles.title}>Contact Rama Fabrics</h1>
       </div>
 
-      <div style={styles.layout}>
-        {/* Contact info cards */}
-        <div style={styles.infoColumn}>
-          <div className="luxury-card" style={styles.infoCard}>
-            <div style={styles.iconCircle}>📍</div>
-            <div>
-              <h3 style={styles.cardTitle}>Store Address</h3>
-              <p style={styles.cardText}>{settings.storeAddress}</p>
-            </div>
-          </div>
-
-          <div className="luxury-card" style={styles.infoCard}>
-            <div style={styles.iconCircle}>📞</div>
-            <div>
-              <h3 style={styles.cardTitle}>Phone Number</h3>
-              <p style={styles.cardText}>{settings.phone}</p>
-            </div>
-          </div>
-
-          <div className="luxury-card" style={styles.infoCard}>
-            <div style={styles.iconCircle}>🕒</div>
-            <div>
-              <h3 style={styles.cardTitle}>Store Hours</h3>
-              <p style={styles.cardText}>Open Daily: {settings.hours}</p>
-            </div>
-          </div>
-
-          {/* Embedded Google Map */}
-          <div style={styles.mapContainer}>
-            <iframe
-              title="Rama Fabrics Google Map Location"
-              src={mapEmbedUrl}
-              style={styles.mapIframe}
-              allowFullScreen=""
-              loading="lazy"
-            ></iframe>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+        {/* Branches Grid */}
+        <div>
+          <h2 style={{ ...styles.formHeading, marginBottom: '24px' }}>Our Locations</h2>
+          <div className="grid grid-3 gap-4" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
+            {branches.map((branch, idx) => (
+              <div key={idx} className="luxury-card" style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '24px' }}>
+                <h3 style={{ ...styles.cardTitle, fontSize: '16px', color: '#6C1425' }}>{branch.name}</h3>
+                <p style={{ ...styles.cardText, display: 'flex', gap: '8px' }}><span>📍</span> <span>{branch.address}</span></p>
+                <p style={{ ...styles.cardText, display: 'flex', gap: '8px' }}><span>📞</span> <span>{branch.phone}</span></p>
+                <p style={{ ...styles.cardText, display: 'flex', gap: '8px' }}><span>🕒</span> <span>Open Daily: {branch.hours}</span></p>
+                <div style={{ ...styles.mapContainer, marginTop: 'auto', paddingTop: '16px' }}>
+                  <iframe
+                    title={`${branch.name} Map`}
+                    src={branch.mapUrl}
+                    style={styles.mapIframe}
+                    allowFullScreen=""
+                    loading="lazy"
+                  ></iframe>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Contact Form */}
-        <div className="luxury-card" style={styles.formCard}>
+        <div style={{ maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+          <div className="luxury-card" style={styles.formCard}>
           <h2 style={styles.formHeading}>Send an Inquiry</h2>
           <p style={styles.formDesc}>Have a question about fabric availability, customization, or custom boutique stitching? Send us a message!</p>
           
@@ -125,6 +133,7 @@ export const Contact = () => {
               Submit Inquiry
             </button>
           </form>
+        </div>
         </div>
       </div>
     </div>
